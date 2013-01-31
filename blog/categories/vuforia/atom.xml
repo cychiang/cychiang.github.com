@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vuforia | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/vuforia/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-01-31T11:44:42+08:00</updated>
+  <updated>2013-01-31T13:00:32+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -18,11 +18,7 @@
     <link href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/"/>
     <updated>2013-01-31T10:47:00+08:00</updated>
     <id>http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i</id>
-    <content type="html"><![CDATA[<p>最近在研究一些AR相關的Library，有Opensource也有沒Opensource，在這當中，</p>
-
-<p>如果想要儘快有成果，不想要管他的實現技術為如何，那vuforia是一個很好的選擇，</p>
-
-<p>除了速度快之外，也提供了很厲害的方式來建立標籤，而這些標簽包括了：</p>
+    <content type="html"><![CDATA[<p>最近在研究一些AR相關的Library，有Opensource也有沒Opensource，在這當中，如果想要儘快有成果，不想要管他的實現技術為如何，那vuforia是一個很好的選擇，除了速度快之外，也提供了很厲害的方式來建立標籤，標簽包括：</p>
 
 <ul>
 <li>Image Target: 其實就是一張影像，不用帶任何特殊記號，帶特殊記號的例子就像QR-Code一樣。</li>
