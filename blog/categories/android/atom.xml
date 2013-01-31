@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-01-31T18:02:49+08:00</updated>
+  <updated>2013-01-31T18:05:11+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -120,7 +120,7 @@ JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative
 
 <p>接著建立CalcFib.c的檔案</p>
 
-<p>``` java</p>
+<p>``` Java</p>
 
 <h1>include "com_esw_ndk_calc_fib_CalcFib.h"</h1>
 
