@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-01-31T16:57:48+08:00</updated>
+  <updated>2013-01-31T18:02:49+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -166,7 +166,7 @@
 
 <p>接著建立CalcFib.c的檔案</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -196,41 +196,42 @@
 <span class='line-number'>28</span>
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#include "com_esw_ndk_calc_fib_CalcFib.h"
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">include</span> <span class="s">&quot;com_esw_ndk_calc_fib_CalcFib.h&quot;</span>
 </span><span class='line'>
-</span><span class='line'>long NativeFibRecursive(long Num) {
-</span><span class='line'>  if(Num &lt;= 0)
-</span><span class='line'>      return 0;
-</span><span class='line'>  if(Num == 1)
-</span><span class='line'>      return 1;
-</span><span class='line'>  return NativeFibRecursive(Num-1) + NativeFibRecursive(Num-2);
-</span><span class='line'>}
-</span><span class='line'>long NativeFibInterative(long Num) {
-</span><span class='line'>  long previous = -1;
-</span><span class='line'>  long result = 1;
-</span><span class='line'>  long i = 0;
-</span><span class='line'>  int sum = 0;
-</span><span class='line'>  for (i=0; i &lt;= Num; i++) {
-</span><span class='line'>      sum = result + previous;
-</span><span class='line'>      previous = result;
-</span><span class='line'>      result = sum;
-</span><span class='line'>  }
-</span><span class='line'>  return result;
-</span><span class='line'>}
-</span><span class='line'>JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive
-</span><span class='line'>  (JNIEnv *env, jclass obj, jlong Num) {
-</span><span class='line'>  return NativeFibRecursive(Num);
-</span><span class='line'>}
+</span><span class='line'><span class="kt">long</span> <span class="nf">NativeFibRecursive</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">if</span><span class="o">(</span><span class="n">Num</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>  <span class="k">if</span><span class="o">(</span><span class="n">Num</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span>
+</span><span class='line'>      <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nf">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="kt">long</span> <span class="nf">NativeFibInterative</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kt">long</span> <span class="n">previous</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>  <span class="kt">long</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>  <span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>  <span class="k">for</span> <span class="o">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">Num</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">sum</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">previous</span><span class="o">;</span>
+</span><span class='line'>      <span class="n">previous</span> <span class="o">=</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'>      <span class="n">result</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="nf">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive</span>
+</span><span class='line'>  <span class="o">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="o">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="o">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nf">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
 </span><span class='line'>
-</span><span class='line'>JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative
-</span><span class='line'>  (JNIEnv *env, jclass obj, jlong Num) {
-</span><span class='line'>  return NativeFibInterative(Num);
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="nf">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative</span>
+</span><span class='line'>  <span class="o">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="o">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="o">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nf">NativeFibInterative</span><span class="o">(</span><span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>除了這些東西之外，最重要的就是<code>Android.mk</code>了，<code>Android</code>底下的<code>Makefile</code>檔。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -238,24 +239,26 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>LOCAL_PATH := $(call my-dir)
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">LOCAL_PATH</span> <span class="o">:=</span> <span class="n">$</span><span class="o">(</span><span class="n">call</span> <span class="n">my</span><span class="o">-</span><span class="n">dir</span><span class="o">)</span>
 </span><span class='line'>
-</span><span class='line'>include $(CLEAR_VARS)
+</span><span class='line'><span class="n">include</span> <span class="n">$</span><span class="o">(</span><span class="n">CLEAR_VARS</span><span class="o">)</span>
 </span><span class='line'>
-</span><span class='line'>LOCAL_MODULE := CalcFib
-</span><span class='line'>LOCAL_SRC_FILES := CalcFib.c
+</span><span class='line'><span class="n">LOCAL_MODULE</span> <span class="o">:=</span> <span class="n">CalcFib</span>
+</span><span class='line'><span class="n">LOCAL_SRC_FILES</span> <span class="o">:=</span> <span class="n">CalcFib</span><span class="o">.</span><span class="na">c</span>
 </span><span class='line'>
-</span><span class='line'>include $(BUILD_SHARED_LIBRARY)</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="n">include</span> <span class="n">$</span><span class="o">(</span><span class="n">BUILD_SHARED_LIBRARY</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>裡面的變數可以在Google找到，主要都是gcc的定義參數等，用來清理或是紀錄當前目錄和環境變數。最重要的一點是<code>LOCAL_MODULE</code>指的是這個Native library的名稱，經過NDK編譯完成之後，會在前面自動加入<code>lib</code>所以經過NDK編譯之後會變成<code>libCalcFib.so</code>這不用太理會，同樣在載入library時也不用刻意加入lib，所以在前面的Java Code當中用來載入Library的程式碼為其中的CalcFib就是<code>LOCAL_MODULE</code>所指定的名稱。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>static {
-</span><span class='line'>  System.loadLibrary("CalcFib");
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">static</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&quot;CalcFib&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>在設定完成之後，開始利用ndk編譯，在ndk的資料夾底下會有：</p>
@@ -268,10 +271,11 @@
 
 <p>ndk-build這是給Mac/Linux用的，而ndk-build.cmd，這是給windows用的，所以如果有設定eclipse自動編譯的會需要注意，不要去include錯誤的ndk-build否則會吐一堆錯誤。接著只要</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd $(path_to_project)/jni
-</span><span class='line'>ndk-build</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">cd</span> <span class="n">$</span><span class="o">(</span><span class="n">path_to_project</span><span class="o">)/</span><span class="n">jni</span>
+</span><span class='line'><span class="n">ndk</span><span class="o">-</span><span class="n">build</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>過程如果沒有意外，就可以產生<code>*.so</code>檔案。對於NDK教學最主要的就是這幾個地方，通常<code>*.so</code>都應該會被自動加入，在建立<code>apk</code>檔案的時候，有時候會發現程式執行的時候找不到<code>ModuleName.so</code>的情況，這很有可能是<code>ndk-build</code>出錯或是某些<code>.so</code>檔沒有找到而且放到專案裡面。</p>
