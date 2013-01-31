@@ -1,24 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[The memo blog.]]></title>
-  <link href="http://cychiang.github.com/atom.xml" rel="self"/>
-  <link href="http://cychiang.github.com/"/>
-  <updated>2013-01-31T14:29:30+08:00</updated>
-  <id>http://cychiang.github.com/</id>
-  <author>
-    <name><![CDATA[Casper Chiang]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JNI在Eclipse的使用 - The memo blog.</title>
+  <meta name="author" content="Casper Chiang">
 
   
-  <entry>
-    <title type="html"><![CDATA[JNI在Eclipse的使用]]></title>
-    <link href="http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong/"/>
-    <updated>2013-01-31T13:25:00+08:00</updated>
-    <id>http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong</id>
-    <content type="html"><![CDATA[<p>JNI=Java Native Interface，會需要用到這個的原因在於Android的一些效能問題，另外一個原因就是使用vuforia的時候，大部份的Code都會需要用到JNI，可能也是因為效能問題吧！在這邊也是參考一些其他網路的資源然後做個備忘。基本上這個備忘主要是參考(Learning Android Chapter 15. Native Development Kit)[http://ofps.oreilly.com/titles/9781449390501/NDK.html]但是&#8230;裡面有些範例用的指令到我這邊都不能用，像是<code>javah -jni [command]</code>所以寫出來也備忘一下。整個程式其實也不會說很龐大，主要列出比較重要的部分。那在網站的範例當中是用計算費式數列的例子。而結果如圖所顯示這樣，主要比較JNI和Java下的執行效能，可以發現遞迴運算的影響頗大的。</p>
+  <meta name="description" content="JNI=Java Native Interface，會需要用到這個的原因在於Android的一些效能問題，另外一個原因就是使用vuforia的時候，大部份的Code都會需要用到JNI，可能也是因為效能問題吧！在這邊也是參考一些其他網路的資源然後做個備忘。基本上這個備忘主要是參考(Learning &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="The memo blog." type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">The memo blog.</a></h1>
+  
+    <h2>About programming language and useful library.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:cychiang.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">JNI在Eclipse的使用</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-31T13:25:00+08:00" pubdate data-updated="true">Jan 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>JNI=Java Native Interface，會需要用到這個的原因在於Android的一些效能問題，另外一個原因就是使用vuforia的時候，大部份的Code都會需要用到JNI，可能也是因為效能問題吧！在這邊也是參考一些其他網路的資源然後做個備忘。基本上這個備忘主要是參考(Learning Android Chapter 15. Native Development Kit)[http://ofps.oreilly.com/titles/9781449390501/NDK.html]但是&#8230;裡面有些範例用的指令到我這邊都不能用，像是<code>javah -jni [command]</code>所以寫出來也備忘一下。整個程式其實也不會說很龐大，主要列出比較重要的部分。那在網站的範例當中是用計算費式數列的例子。而結果如圖所顯示這樣，主要比較JNI和Java下的執行效能，可以發現遞迴運算的影響頗大的。</p>
 
 <p><img src=https://dl.dropbox.com/u/15251095/2013_01_31_ndk/fib_ndk_result.png weight=320 height=240/></p>
 
@@ -275,67 +347,115 @@
 
 
 <p>過程如果沒有意外，就可以產生<code>*.so</code>檔案。對於NDK教學最主要的就是這幾個地方，通常<code>*.so</code>都應該會被自動加入，在建立<code>apk</code>檔案的時候，有時候會發現程式執行的時候找不到<code>ModuleName.so</code>的情況，這很有可能是<code>ndk-build</code>出錯或是某些<code>.so</code>檔沒有找到而且放到專案裡面。</p>
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  <entry>
-    <title type="html"><![CDATA[Research on vuforia-I]]></title>
-    <link href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/"/>
-    <updated>2013-01-31T10:47:00+08:00</updated>
-    <id>http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i</id>
-    <content type="html"><![CDATA[<p>最近在研究一些AR相關的Library，有Opensource也有沒Opensource，在這當中，如果想要儘快有成果，不想要管他的實現技術為如何，那vuforia是一個很好的選擇，除了速度快之外，也提供了很厲害的方式來建立標籤，標簽包括：</p>
 
-<ul>
-<li>Image Target: 其實就是一張影像，不用帶任何特殊記號，帶特殊記號的例子就像QR-Code一樣。</li>
-<li>Multi Target: 不是多重目標，指的是3D Object，例如盒子之類的標籤。</li>
-<li>Frame Marker: 指的是帶特殊記號的影像。</li>
-</ul>
+<span class="byline author vcard">Posted by <span class="fn">Casper Chiang</span></span>
+
+      
 
 
-<p>詳細的說明可以在<a href="https://developer.vuforia.com/">vuforia developer portal</a>找到很多資源。</p>
-
-<p>而想要用vuforia的資源，一定得要註冊成為vuforia developer，在1.0的時代，曾經註冊過，但是個人覺得很難用，到了2.0時代，好像是2012年底的時候release，變的特別好用。所以特別推薦。</p>
-
-<p>尤其他們提供的Cloud recognition很有趣，跟以前所想要弄的研究很相似，既然他們完成了，就努力用吧！</p>
-
-<p>特別說一下Cloud recognition，他是掃瞄完可能需要Render虛擬物件的Target然後透過網路去比對確認。</p>
-
-<p>所以可以不用把Target的資訊存在手機端。但是還是需要把要Render的東西放在手機當中。</p>
-
-<p>接下來就是先來跑一下建立的步驟。</p>
-
-<p>這個是註冊完成之後，點入Target Manager的畫面，如果是空的就會有一些教學。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Target_Manager.png weight=320 height=240 /></p>
-
-<p>在這邊有兩種Database：</p>
-
-<ul>
-<li>Device Database</li>
-<li>Cloud Database</li>
-</ul>
 
 
-<p>就如前面所講的，主要是是不是要把標籤資料放在手機端或是放在「雲端」，在這邊我是先建立Device Database，點進去之後就會看到Create Database的選項。</p>
 
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_CreateDB.png weight=320 height=120 /></p>
 
-<p>接著建立之後，輸入這個Database的名稱，當然是隨便Key囉。完成之後就會看到頁面出現一個空的Database。另外為什麼不用Cloud Database?因為在測試的時候，不知道為什麼一直都無法正常的使用自己的Cloud Database等哪天可以使用的時候再來備忘一下。</p>
 
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_AfterCreateDB.png weight=320 height=240 /></p>
 
-<p>在加入Image Target的時候，會需要輸入一些資訊，只要照的填寫就好了，但是唯一有一個比較有問題的是Weight的選項，還是Height的選項，這部分我是直接填入我們影像的Weight的pixel值。</p>
-
-<p>最後這是完成塞入一堆圖的結果。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Finish.png weight=320 height=240 /></p>
-
-<p>接著如果要在手機端使用這些Database只要進去所建立的Database當中，把想要的Target打勾之後，會有一個Download Selected Targets的按鈕，按下去就會出現。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Download.png weight=320 height=240 /></p>
-
-<p>下載回來之後只要修改設定一下載入的Dataset就可以使用了。</p>
-]]></content>
-  </entry>
   
-</feed>
+
+
+<time datetime="2013-01-31T13:25:00+08:00" pubdate data-updated="true">Jan 31<span>st</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/android/'>Android</a>, <a class='category' href='/blog/categories/jni/'>JNI</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong/" data-via="" data-counturl="http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/31/research-on-vuforia-i/" title="Previous Post: Research on vuforia-I">&laquo; Research on vuforia-I</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/31/jnizai-eclipsede-shi-yong/">JNI在Eclipse的使用</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/31/research-on-vuforia-i/">Research on vuforia-I</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Casper Chiang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
