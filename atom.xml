@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-01-31T14:29:30+08:00</updated>
+  <updated>2013-01-31T14:32:11+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -18,7 +18,7 @@
     <link href="http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong/"/>
     <updated>2013-01-31T13:25:00+08:00</updated>
     <id>http://cychiang.github.com/blog/2013/01/31/jnizai-eclipsede-shi-yong</id>
-    <content type="html"><![CDATA[<p>JNI=Java Native Interface，會需要用到這個的原因在於Android的一些效能問題，另外一個原因就是使用vuforia的時候，大部份的Code都會需要用到JNI，可能也是因為效能問題吧！在這邊也是參考一些其他網路的資源然後做個備忘。基本上這個備忘主要是參考(Learning Android Chapter 15. Native Development Kit)[http://ofps.oreilly.com/titles/9781449390501/NDK.html]但是&#8230;裡面有些範例用的指令到我這邊都不能用，像是<code>javah -jni [command]</code>所以寫出來也備忘一下。整個程式其實也不會說很龐大，主要列出比較重要的部分。那在網站的範例當中是用計算費式數列的例子。而結果如圖所顯示這樣，主要比較JNI和Java下的執行效能，可以發現遞迴運算的影響頗大的。</p>
+    <content type="html"><![CDATA[<p>JNI=Java Native Interface，會需要用到這個的原因在於Android的一些效能問題，另外一個原因就是使用vuforia的時候，大部份的Code都會需要用到JNI，可能也是因為效能問題吧！在這邊也是參考一些其他網路的資源然後做個備忘。基本上這個備忘主要是參考<a href="http://ofps.oreilly.com/titles/9781449390501/NDK.html">Learning Android Chapter 15. Native Development Kit</a>，但是…裡面有些範例用的指令到我這邊都不能用，像是<code>javah -jni [command]</code>所以寫出來也備忘一下。整個程式其實也不會說很龐大，主要列出比較重要的部分。那在網站的範例當中是用計算費式數列的例子。而結果如圖所顯示這樣，主要比較JNI和Java下的執行效能，可以發現遞迴運算的影響頗大的。</p>
 
 <p><img src=https://dl.dropbox.com/u/15251095/2013_01_31_ndk/fib_ndk_result.png weight=320 height=240/></p>
 
