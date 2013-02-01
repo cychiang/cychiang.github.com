@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T12:11:32+08:00</updated>
+  <updated>2013-02-01T12:12:26+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -23,7 +23,7 @@
 <p>最後在最近發現了有人介紹Octopress + Github寫網誌，這有點興趣，用了一下感覺也不錯，所以就重新開始了寫Blog之旅，在這邊主要就紀錄一下常用的指令。<a href="http://octopress.org/docs/">也可以參考Octopress官方網站</a>，註解程式碼:<a href="http://octopress.org/docs/blogging/code/">參考這邊</a></p>
 
 <p><code>
-rake new_post["post_title"]     //建立新文章，會自動產生一個.markdown的文件
+rake new_post["post_title"]      //建立新文章，會自動產生一個.markdown的文件
 rake generate                       //寫完文章之後，用這個指令產生網誌頁面
 rake deploy                     //把網誌發佈到github上面
 </code>
