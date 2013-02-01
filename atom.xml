@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T12:13:38+08:00</updated>
+  <updated>2013-02-01T14:26:12+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -12,6 +12,43 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Upgrade python on mac os x]]></title>
+    <link href="http://cychiang.github.com/blog/2013/02/01/upgrade-python-on-mac-os-x/"/>
+    <updated>2013-02-01T14:16:00+08:00</updated>
+    <id>http://cychiang.github.com/blog/2013/02/01/upgrade-python-on-mac-os-x</id>
+    <content type="html"><![CDATA[<p>提到Python，在mac os x底下似乎有預先安裝好Python 2.7.2，但是更新？就有點問題，首先它被埋在<code>/usr/bin</code>底下，然後好像又<code>symbol link</code>到其他怪怪的資料夾，所以花了很多時間在找怎樣安裝新的Python 2.7.3或是之後的Python 3.x卻又不用動到原本預先安裝好在麻煩的<code>/usr/bin</code>底下的python 2.7.2。最後發現了一個方便的方式，就是只要修改<code>/etc/paths</code>內容，調整一下尋找順序就可以了。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/usr/local/bin
+</span><span class='line'>/usr/bin
+</span><span class='line'>/bin
+</span><span class='line'>/usr/sbin
+</span><span class='line'>/sbin</span></code></pre></td></tr></table></div></figure>
+
+
+<p>因為我是透過<code>brew</code>來安裝新的python所以在安裝的時候，預設執行目錄會在<code>/usr/local/bin</code>但是同樣的python執行檔同時存在於<code>/usr/bin</code>，所以會依照出現順序的先後來決定吧，就是先找哪個<code>path</code>先找到先贏。<a href="http://muttsnutts.github.com/">似乎在這邊可以理解一下mac os x的尋找路徑方式</a>，以下是原本沒修改前<code>/etc/paths</code>的搜尋順序。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/usr/bin
+</span><span class='line'>/bin
+</span><span class='line'>/usr/sbin
+</span><span class='line'>/sbin
+</span><span class='line'>/usr/local/bin</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所以只要把<code>brew</code>所安裝的<code>/usr/local/bin</code>提到最前面，就可以了！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Octopress memo-I]]></title>
