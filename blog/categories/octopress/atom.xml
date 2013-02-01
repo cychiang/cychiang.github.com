@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T12:04:26+08:00</updated>
+  <updated>2013-02-01T12:09:14+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -26,12 +26,9 @@
 rake new_post["post_title"]     //建立新文章，會自動產生一個.markdown的文件
 rake generate                   //寫完文章之後，用這個指令產生網誌頁面
 rake deploy                     //把網誌發佈到github上面
-註解程式碼
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>[Title_Name_of_Code] [lang:] </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"></pre></td><td class='code'><pre><code class=''></code></pre></td></tr></table></div></figure></notextile></div>
-</code></p>
-
-<p>安裝所需要的東西有：</p>
+註解程式碼:[參考這邊](http://octopress.org/docs/blogging/code/)
+</code>
+安裝所需要的東西有：</p>
 
 <ul>
 <li>Ruby</li>
@@ -44,9 +41,9 @@ rake deploy                     //把網誌發佈到github上面
 
 <p>```</p>
 
-<h1>安裝rvm，Ruby Version Manager</h1>
+<h1>安裝rvm，Ruby Version Manager，參考這邊</h1>
 
-<p>https://rvm.io/                             # 參考這邊</p>
+<p>https://rvm.io/</p>
 
 <h1>安裝ruby 1.9.3</h1>
 
