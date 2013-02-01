@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Octopress | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T12:10:29+08:00</updated>
+  <updated>2013-02-01T12:11:32+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -24,7 +24,7 @@
 
 <p><code>
 rake new_post["post_title"]     //建立新文章，會自動產生一個.markdown的文件
-rake generate                   //寫完文章之後，用這個指令產生網誌頁面
+rake generate                       //寫完文章之後，用這個指令產生網誌頁面
 rake deploy                     //把網誌發佈到github上面
 </code>
 安裝所需要的東西有：</p>
@@ -46,13 +46,13 @@ rake deploy                     //把網誌發佈到github上面
 
 <h1>安裝ruby 1.9.3</h1>
 
-<p>rvm install 1.9.3                           # 透過rvm安裝ruby 1.9.3
+<p>rvm install 1.9.3                               # 透過rvm安裝ruby 1.9.3
 rvm 1.9.3 --default                         # 設定1.9.3為預設版本
 ruby --version                              # 確認版本</p>
 
 <h1>Note:依稀記得在我的Mac上，發生了安裝ruby 1.9.3出現問題，似乎pkg-config的路徑問題</h1>
 
-<pre><code>                                        # 抓octopress，從github
+<pre><code>                                            # 抓octopress，從github
 </code></pre>
 
 <p>git clone git://github.com/imathis/octopress.git octopress
@@ -63,7 +63,7 @@ rake install</p>
 
 <h1>更新Octopress</h1>
 
-<p>git pull octopress master                   # 取得最後一版的octopress
+<p>git pull octopress master                       # 取得最後一版的octopress
 bundle install                              # 更新gem
 rake update_source                          # 更新source
 rake update_style                           # 更新template
