@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JNI | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/jni/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T11:00:47+08:00</updated>
+  <updated>2013-02-01T11:01:36+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -120,7 +120,7 @@ JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative
 
 <p>接著建立CalcFib.c的檔案</p>
 
-<p>``` [java]</p>
+<p>``` java</p>
 
 <h1>include "com_esw_ndk_calc_fib_CalcFib.h"</h1>
 
