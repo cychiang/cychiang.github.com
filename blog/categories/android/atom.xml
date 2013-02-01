@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-01T11:13:04+08:00</updated>
+  <updated>2013-02-01T11:16:52+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -24,39 +24,70 @@
 
 <p>現在開始說明程式碼的部分：</p>
 
-<p>```
-package com.esw.ndk.calc.fib;</p>
-
-<p>public class CalcFib {</p>
-
-<pre><code>//Java Fib implementation
-public static long JavaFibRecursive(long Num) {
-    if (Num &lt;= 0)
-        return 0;
-    if (Num == 1)
-        return 1;
-    return JavaFibRecursive(Num-1) + JavaFibRecursive(Num-2);
-}
-public static long JavaFibInterative(long Num) {
-    long previous = -1;
-    long result = 1;
-    for (long i = 0; i &lt;= Num; i++) {
-        long sum = result + previous;
-        previous = result;
-        result = sum;
-    }
-    return result;
-}
-//Native Fib implementation
-static {
-    System.loadLibrary("CalcFib");
-}
-public static native long NativeFibRecursive(long Num);
-public static native long NativeFibInterative(long Num);
-</code></pre>
-
-<p>}
-```</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>CalcFib.java  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">esw</span><span class="o">.</span><span class="na">ndk</span><span class="o">.</span><span class="na">calc</span><span class="o">.</span><span class="na">fib</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CalcFib</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">//Java Fib implementation</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">long</span> <span class="nf">JavaFibRecursive</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">Num</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">0</span><span class="o">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">Num</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nf">JavaFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">JavaFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">long</span> <span class="nf">JavaFibInterative</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">long</span> <span class="n">previous</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>    <span class="kt">long</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="n">Num</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kt">long</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">previous</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">previous</span> <span class="o">=</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">result</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="c1">//Native Fib implementation</span>
+</span><span class='line'><span class="kd">static</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&quot;CalcFib&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">native</span> <span class="kt">long</span> <span class="nf">NativeFibRecursive</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kd">native</span> <span class="kt">long</span> <span class="nf">NativeFibInterative</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>其實也沒有什麼好說明，就一個java class裡面有四個function兩個Java兩個Native code，在這邊用兩種費式數列計算方式，一個遞迴另外一個是疊代。實驗的結果就像前面所講的。有關於疊代和遞迴這兩種方式的差異，可以Google看看。在這程式碼當中比較重要的是<code>public static native …</code>這段，這部分是宣告這邊是需要透過native的方式進行呼叫需要的Function，就像是在跟Java說，這部分我要丟給別人做一樣。</p>
 
@@ -75,52 +106,94 @@ javah -classpath $(path_to_project)/bin/classes packagename.classname
 </code>
 之後就可以在<code>bin</code>資料夾看到<code>classname.h</code>的header檔，在這邊我們的packagename=<code>com.esw.ndk.calc.fib</code>，classname=<code>CalcFib</code>，所以組合起來=<code>com.esw.ndk.calc.fib.CalcFib</code>。接著只要在eclipse的專案當中加入jni的資料夾，接著把header搬過去就可以開始寫native code。這是所自動產生的header檔</p>
 
-<p>```
-/<em> DO NOT EDIT THIS FILE - it is machine generated </em>/</p>
-
-<h1>include &lt;jni.h></h1>
-
-<p>/<em> Header for class com_esw_ndk_calc_fib_CalcFib </em>/</p>
-
-<h1>ifndef _Included_com_esw_ndk_calc_fib_CalcFib</h1>
-
-<h1>define _Included_com_esw_ndk_calc_fib_CalcFib</h1>
-
-<h1>ifdef __cplusplus</h1>
-
-<p>extern "C" {</p>
-
-<h1>endif</h1>
-
-<p>/<em>
- * Class:     com_esw_ndk_calc_fib_CalcFib
- * Method:    NativeFibRecursive
- * Signature: (J)J
- </em>/
-JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive
-  (JNIEnv *, jclass, jlong);</p>
-
-<p>/<em>
- * Class:     com_esw_ndk_calc_fib_CalcFib
- * Method:    NativeFibInterative
- * Signature: (J)J
- </em>/
-JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative
-  (JNIEnv *, jclass, jlong);</p>
-
-<h1>ifdef __cplusplus</h1>
-
-<p>}</p>
-
-<h1>endif</h1>
-
-<h1>endif</h1>
-
-<p>```</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>com_esw_ndk_calc_fib_CalcFib.h  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">DO</span> <span class="n">NOT</span> <span class="n">EDIT</span> <span class="n">THIS</span> <span class="kt">FILE</span> <span class="o">-</span> <span class="n">it</span> <span class="n">is</span> <span class="n">machine</span> <span class="n">generated</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">jni</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">Header</span> <span class="k">for</span> <span class="n">class</span> <span class="n">com_esw_ndk_calc_fib_CalcFib</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifndef</span> <span class="n">_Included_com_esw_ndk_calc_fib_CalcFib</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">_Included_com_esw_ndk_calc_fib_CalcFib</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifdef</span> <span class="n">__cplusplus</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">em</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Class</span><span class="o">:</span>     <span class="n">com_esw_ndk_calc_fib_CalcFib</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Method</span><span class="o">:</span>    <span class="n">NativeFibRecursive</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Signature</span><span class="o">:</span> <span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="n">J</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="n">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive</span>
+</span><span class='line'>  <span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jclass</span><span class="p">,</span> <span class="n">jlong</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">em</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Class</span><span class="o">:</span>     <span class="n">com_esw_ndk_calc_fib_CalcFib</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Method</span><span class="o">:</span>    <span class="n">NativeFibInterative</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Signature</span><span class="o">:</span> <span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="n">J</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="n">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative</span>
+</span><span class='line'>  <span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jclass</span><span class="p">,</span> <span class="n">jlong</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifdef</span> <span class="n">__cplusplus</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>接著建立CalcFib.c的檔案</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>CalcFib.java  </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>CalcFib.c  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -165,50 +238,50 @@ JNIEXPORT jlong JNICALL Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative
 <span class='line-number'>42</span>
 <span class='line-number'>43</span>
 <span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="s">&quot;com_esw_ndk_calc_fib_CalcFib.h&quot;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">long</span> <span class="n">NativeFibRecursive</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">long</span> <span class="n">NativeFibRecursive</span><span class="p">(</span><span class="kt">long</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span><span class="o">(</span><span class="n">Num</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">0</span><span class="o">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'><span class="k">if</span><span class="o">(</span><span class="n">Num</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'><span class="k">return</span> <span class="nf">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span><span class="p">(</span><span class="n">Num</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="n">Num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="k">return</span> <span class="nf">NativeFibRecursive</span><span class="p">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">NativeFibRecursive</span><span class="p">(</span><span class="n">Num</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
 </span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
-</span><span class='line'><span class="kt">long</span> <span class="nf">NativeFibInterative</span><span class="o">(</span><span class="kt">long</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="kt">long</span> <span class="n">NativeFibInterative</span><span class="p">(</span><span class="kt">long</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">long</span> <span class="n">previous</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
-</span><span class='line'><span class="kt">long</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'><span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="n">Num</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>    <span class="n">sum</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">previous</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">previous</span> <span class="o">=</span> <span class="n">result</span><span class="o">;</span>
-</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'><span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">long</span> <span class="n">previous</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="kt">long</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="n">Num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">sum</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">previous</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">previous</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">sum</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">return</span> <span class="n">result</span><span class="p">;</span>
 </span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
-</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="nf">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive</span>
-</span><span class='line'>  <span class="o">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="o">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="o">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="n">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibRecursive</span>
+</span><span class='line'>  <span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="p">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">return</span> <span class="n">NativeFibRecursive</span><span class="o">(</span><span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">return</span> <span class="n">NativeFibRecursive</span><span class="p">(</span><span class="n">Num</span><span class="p">);</span>
 </span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">JNIEXPORT</span> <span class="n">jlong</span> <span class="n">JNICALL</span> <span class="n">Java_com_esw_ndk_calc_fib_CalcFib_NativeFibInterative</span>
-</span><span class='line'>  <span class="o">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="o">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="o">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="n">jclass</span> <span class="n">obj</span><span class="p">,</span> <span class="n">jlong</span> <span class="n">Num</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">return</span> <span class="n">NativeFibInterative</span><span class="o">(</span><span class="n">Num</span><span class="o">);</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">return</span> <span class="n">NativeFibInterative</span><span class="p">(</span><span class="n">Num</span><span class="p">);</span>
 </span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>除了這些東西之外，最重要的就是<code>Android.mk</code>了，<code>Android</code>底下的<code>Makefile</code>檔。</p>
