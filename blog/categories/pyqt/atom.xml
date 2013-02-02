@@ -4,7 +4,7 @@
   <title><![CDATA[Category: PyQt | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/pyqt/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-02T21:39:46+08:00</updated>
+  <updated>2013-02-02T21:43:18+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -138,7 +138,7 @@
 
 <p><code>
 MainGui.setGeometry(x, y, w, h)                  # 設定程式出現在螢幕的x, y地方以及程式的大小
-MainGui.setWindowTitle("String"")                    # 這部分是指定我的視窗名稱要什麼
+MainGui.setWindowTitle("String"")                   # 這部分是指定我的視窗名稱要什麼
 MainGui.setToolTip("String")                        # 這部分是當滑鼠放在程式當中空白部分，會出現哪些字
 MainGui.setWindowIcon(QtGui.QIcon("path"”))         # 裡面可以指定Icon的小圖案
 MainGui.setStyleSheet('background: white')      # 指定背景顏色，似乎可以套用個圖片之類的
