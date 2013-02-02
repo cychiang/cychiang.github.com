@@ -9,7 +9,25 @@
   <meta name="author" content="Casper Chiang">
 
   
-  <meta name="description" content="提到Python，在mac os x底下似乎有預先安裝好Python 2.7.2，但是更新？就有點問題，首先它被埋在/usr/bin底下，然後好像又symbol link到其他怪怪的資料夾，所以花了很多時間在找怎樣安裝新的Python 2.7.3或是之後的Python 3. &hellip;">
+  <meta name="description" content="老是有很多想法，無奈時間不是很充足，後來想想，時間就像OO，所以我決定堅持到底，看能不能每天都寫點東西，除了持續一下這個Blog也持續寫Code練習練習，避免練習不足。 PyQtGuiMain.py 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +82,150 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/02/python-gui-programming-i/">Python: GUI Programming-I</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-02T20:28:00+08:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>老是有很多想法，無奈時間不是很充足，後來想想，時間就像OO，所以我決定堅持到底，看能不能每天都寫點東西，除了持續一下這個Blog也持續寫Code練習練習，避免練習不足。</p>
+
+<figure class='code'><figcaption><span>PyQtGuiMain.py  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">###</span>
+</span><span class='line'><span class="c">#Created on 2013/2/2</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#@author: CYChiang</span>
+</span><span class='line'><span class="c">###</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtGui</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">PyGui</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">PyGui</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># set component</span>
+</span><span class='line'>        <span class="n">Label</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s">&quot;The Label&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">button</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&quot;Click Me&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">lineEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+</span><span class='line'>        <span class="c"># configure the layout</span>
+</span><span class='line'>        <span class="n">mainLayout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QGridLayout</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">mainLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">Label</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">mainLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">lineEdit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">mainLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># add event listener and handle</span>
+</span><span class='line'>        <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># set layout</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">mainLayout</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">MainGui</span> <span class="o">=</span> <span class="n">PyGui</span><span class="p">()</span>
+</span><span class='line'>    <span class="c"># setGeometry(x_pos, y_pos, width, height)</span>
+</span><span class='line'>    <span class="n">MainGui</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># resize(width, height)</span>
+</span><span class='line'>    <span class="c"># MainGui.resize(400, 300)</span>
+</span><span class='line'>    <span class="c"># Set the title of program</span>
+</span><span class='line'>    <span class="n">MainGui</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&#39;The PyQt GUI&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># Set Icon</span>
+</span><span class='line'>    <span class="c"># MainGui.setWindowIcon(QtGui.QIcon(&#39;lucia_2d.png&#39;))</span>
+</span><span class='line'>    <span class="n">MainGui</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s">&#39;I am message.&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># Set style</span>
+</span><span class='line'>    <span class="n">MainGui</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s">&#39;background: white&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># Display </span>
+</span><span class='line'>    <span class="n">MainGui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span><span class='line'>    <span class="c"># run and exit</span>
+</span><span class='line'>    <span class="n">app</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>程式執行起來大概長成這樣。整個來說Python在用Qt寫GUI上就跟C/C++寫Qt差不多，很多方法都一樣的使用方式，那在這邊主要先練習一下QWidget有哪些功能以及要怎樣使用Qt的connect，這部分就和之前C/C++用法不太一樣，不知道是不是因為新版本的關係。</p>
+
+<p><img src=https://dl.dropbox.com/u/15251095/PyQtGui/ThePyQtGui.png width=640 height=480 /></p>
+
+<p>附上一點解說，同樣主要針對QWidget。後來發現除非對某些視窗需要特別的方法，不然似乎使用framework提供的方法就很夠用了。之後會慢慢的寫些東西補齊全，至於最後出現哪些東西，我也不知道。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>MainGui.setWindowTitle("String"")                # 這部分是指定我的視窗名稱要什麼
+</span><span class='line'>MainGui.setToolTip("String")                  # 這部分是當滑鼠放在程式當中空白部分，會出現哪些字
+</span><span class='line'>MainGui.setWindowIcon(QtGui.QIcon("path"”)) # 裡面可以指定Icon的小圖案
+</span><span class='line'>MainGui.setStyleSheet('background: white')        # 指定背景顏色，似乎可以套用個圖片之類的</span></code></pre></td></tr></table></div></figure>
+
+
+<p>至於其他的object有提供哪些方法？我想大部份和QWidget提供的差不多，我想。但是在排版上，可以透過一些layout來輔助，如果指定一些特別的位置在程式當中。希望每天可以持續下去！這樣的寫程式方式，當然另外一方面Python用的不是很熟，想要寫些額外的東西有點卡卡，就先熟悉然後繼續練習和強化自己。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -622,6 +784,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/02/02/python-gui-programming-i/">Python: GUI Programming-I</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/02/01/upgrade-python-on-mac-os-x/">Upgrade python on mac os x</a>
