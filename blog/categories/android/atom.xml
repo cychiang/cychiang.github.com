@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Android | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-03T15:12:32+08:00</updated>
+  <updated>2013-02-04T16:57:49+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -12,6 +12,931 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Vuforia-II: Camera]]></title>
+    <link href="http://cychiang.github.com/blog/2013/02/04/vuforia-ii-camera/"/>
+    <updated>2013-02-04T14:23:00+08:00</updated>
+    <id>http://cychiang.github.com/blog/2013/02/04/vuforia-ii-camera</id>
+    <content type="html"><![CDATA[<p>為了能夠完全掌握<code>vuforia</code>怎樣在<code>Android</code>上使用，個人的風格就是逐步拆解範例程式的<code>Code</code>然後做一個通盤了解，不僅止於在能修改這上面。在<code>vuforia</code>的範例程式當中，主要有分幾個部分：</p>
+
+<ul>
+<li>版權聲明</li>
+<li>讀取畫面</li>
+<li>開啟camera</li>
+<li>執行AR演算法</li>
+<li>是否有找到標籤，有則Render物件沒有則跳過</li>
+</ul>
+
+
+<p>以上大概是每個範例程式所會進行的事情，那在這當中最基本的大概就是開啟<code>Camera</code>吧！在建立完專案之後，先加入一下使用Camera的權限到Android程式當中。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>AndroidManifest.xml lang=xml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span><span class="ni">&amp;lt;</span>?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+</span><span class='line'><span class="ni">&amp;lt;</span>manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;<span class="nt">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span>package=&quot;com.example.vuforiacamera&quot;
+</span><span class='line'>android:versionCode=&quot;1&quot;
+</span><span class='line'>android:versionName=&quot;1.0&quot; <span class="ni">&amp;gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="ni">&amp;lt;</span>uses-sdk
+</span><span class='line'>    android:minSdkVersion=&quot;15&quot;
+</span><span class='line'>    android:targetSdkVersion=&quot;15&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>!-- Add permission of camera --<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>uses-feature android:name=&quot;android.hardware.camera&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>uses-permission android:name=&quot;android.permission.CAMERA&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="ni">&amp;lt;</span>application
+</span><span class='line'>    android:allowBackup=&quot;true&quot;
+</span><span class='line'>    android:icon=&quot;@drawable/ic_launcher&quot;
+</span><span class='line'>    android:label=&quot;@string/app_name&quot;
+</span><span class='line'>    android:theme=&quot;@style/AppTheme&quot; <span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>activity
+</span><span class='line'>        android:name=&quot;com.example.vuforiacamera.MainActivity&quot;
+</span><span class='line'>        android:configChanges=&quot;orientation|keyboardHidden&quot;
+</span><span class='line'>        android:label=&quot;@string/app_name&quot; <span class="ni">&amp;gt;</span>
+</span><span class='line'>        <span class="ni">&amp;lt;</span>intent-filter<span class="ni">&amp;gt;</span>
+</span><span class='line'>            <span class="ni">&amp;lt;</span>action android:name=&quot;android.intent.action.MAIN&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="ni">&amp;lt;</span>category android:name=&quot;android.intent.category.LAUNCHER&quot; /<span class="ni">&amp;gt;</span>
+</span><span class='line'>        <span class="ni">&amp;lt;</span>/intent-filter<span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>/activity<span class="ni">&amp;gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="ni">&amp;lt;</span>/application<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;&lt;/manifest&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>根據之前分析的範例程式的結果，裡面分為幾個步驟：<code>Init_QCAR</code>-><code>Init_Tracker</code>-><code>InitApp_AR</code>-><code>InitLoader_Tracker</code>詳細過程內容，看看之後有沒有興趣補上，以上名字不一定正確因為是自己寫的簡解XD，但是都在vuforia範例程式當中可以找到。那在<code>Init_QCAR</code>以及<code>Init_Tracker</code>當中，主要是讀取<code>QCAR</code>的<code>Library</code>也就是<code>vuforia</code>在<code>Init_Tracker</code>當中，為讀取資料庫，資料庫是什麼東西？可以參考<a href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/">Vuforia-I</a>的文章。
+在這範例程式當中，使用了<code>OpenGL ES</code>來當作繪圖的主要工具之一，其中也有一大段的<code>Code</code>在偵測平台支援<code>OpenGL ES 1.1 or OpenGL ES 2.0</code>在Camera讀取影像並且貼到<code>GLSurfaceView</code>這部分是必需要能釐清的部分，而這中間包含了一些<code>OpenGL ES</code>的寫法，說真的也不是很了解XD。總覺得需要寫很久…就分部分寫吧！先來了解一下<code>Sample Code</code>它所提寫的<code>QCARSampleGLView.java</code>，其實裡面有很多設定完全不知所以然，在這邊就慢慢解說和了解這<code>Code</code>所需要完成的事情。了解之後也比較好釐清一個<code>OpenGL ES</code>程式該怎樣寫。整段貼上，連同聲明！</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>QCARSampleGLView.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+<span class='line-number'>256</span>
+<span class='line-number'>257</span>
+<span class='line-number'>258</span>
+<span class='line-number'>259</span>
+<span class='line-number'>260</span>
+<span class='line-number'>261</span>
+<span class='line-number'>262</span>
+<span class='line-number'>263</span>
+<span class='line-number'>264</span>
+<span class='line-number'>265</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="cm">/*==============================================================================&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">&lt;pre&gt;&lt;code&gt;        Copyright (c) 2010-2012 QUALCOMM Austria Research Center GmbH.</span>
+</span><span class='line'><span class="cm">        All Rights Reserved.</span>
+</span><span class='line'><span class="cm">        Qualcomm Confidential and Proprietary</span>
+</span><span class='line'><span class="cm">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">&lt;p&gt;==============================================================================*/</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">qualcomm</span><span class="o">.</span><span class="na">QCARSamples</span><span class="o">.</span><span class="na">ImageTargets</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">com.qualcomm.QCAR.QCAR</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">javax.microedition.khronos.egl.EGL10</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.microedition.khronos.egl.EGLConfig</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.microedition.khronos.egl.EGLContext</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.microedition.khronos.egl.EGLDisplay</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">android.content.Context</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.graphics.PixelFormat</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.opengl.GLSurfaceView</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">em</span><span class="o">&gt;*</span> <span class="n">QCARSampleGLView</span> <span class="n">is</span> <span class="n">a</span> <span class="n">support</span> <span class="kd">class</span> <span class="nc">for</span> <span class="n">the</span> <span class="n">QCAR</span> <span class="n">samples</span> <span class="n">applications</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span>  <span class="n">Responsible</span> <span class="k">for</span> <span class="n">setting</span> <span class="n">up</span> <span class="n">and</span> <span class="n">configuring</span> <span class="n">the</span> <span class="n">OpenGL</span> <span class="n">surface</span> <span class="n">view</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">QCARSampleGLView</span> <span class="kd">extends</span> <span class="n">GLSurfaceView</span>
+</span><span class='line'><span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="n">mUseOpenGLES2</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Constructor. */</span>
+</span><span class='line'><span class="kd">public</span> <span class="nf">QCARSampleGLView</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">)</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Initialization. */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="kt">int</span> <span class="n">flags</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">translucent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="o">,</span> <span class="kt">int</span> <span class="n">stencil</span><span class="o">)</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="c1">// By default GLSurfaceView tries to find a surface that is as close</span>
+</span><span class='line'>    <span class="c1">// as possible to a 16-bit RGB frame buffer with a 16-bit depth buffer.</span>
+</span><span class='line'>    <span class="c1">// This function can override the default values and set custom values.</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Extract OpenGL ES version from flags</span>
+</span><span class='line'>    <span class="n">mUseOpenGLES2</span> <span class="o">=</span> <span class="o">(</span><span class="n">flags</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">GL_20</span><span class="o">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// By default, GLSurfaceView() creates a RGB_565 opaque surface.</span>
+</span><span class='line'>    <span class="c1">// If we want a translucent one, we should change the surface&#39;s</span>
+</span><span class='line'>    <span class="c1">// format here, using PixelFormat.TRANSLUCENT for GL Surfaces</span>
+</span><span class='line'>    <span class="c1">// is interpreted as any 32-bit surface with alpha by SurfaceFlinger.</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGI</span><span class="o">(</span><span class="s">&quot;Using OpenGL ES &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="n">mUseOpenGLES2</span> <span class="o">?</span> <span class="s">&quot;2.0&quot;</span> <span class="o">:</span> <span class="s">&quot;1.x&quot;</span><span class="o">));</span>
+</span><span class='line'>    <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGI</span><span class="o">(</span><span class="s">&quot;Using &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="n">translucent</span> <span class="o">?</span> <span class="s">&quot;translucent&quot;</span> <span class="o">:</span> <span class="s">&quot;opaque&quot;</span><span class="o">)</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s">&quot; GLView, depth buffer size: &quot;</span> <span class="o">+</span> <span class="n">depth</span> <span class="o">+</span> <span class="s">&quot;, stencil size: &quot;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="n">stencil</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// If required set translucent format to allow camera image to</span>
+</span><span class='line'>    <span class="c1">// show through in the background</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">translucent</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">getHolder</span><span class="o">().</span><span class="na">setFormat</span><span class="o">(</span><span class="n">PixelFormat</span><span class="o">.</span><span class="na">TRANSLUCENT</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Setup the context factory for 1.x / 2.0 rendering</span>
+</span><span class='line'>    <span class="n">setEGLContextFactory</span><span class="o">(</span><span class="k">new</span> <span class="n">ContextFactory</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// We need to choose an EGLConfig that matches the format of</span>
+</span><span class='line'>    <span class="c1">// our surface exactly. This is going to be done in our</span>
+</span><span class='line'>    <span class="c1">// custom config chooser. See ConfigChooser class definition</span>
+</span><span class='line'>    <span class="c1">// below.</span>
+</span><span class='line'>    <span class="n">setEGLConfigChooser</span><span class="o">(</span> <span class="n">translucent</span> <span class="o">?</span>
+</span><span class='line'>                         <span class="k">new</span> <span class="nf">ConfigChooser</span><span class="o">(</span><span class="mi">8</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="mi">8</span><span class="o">,</span> <span class="n">depth</span><span class="o">,</span> <span class="n">stencil</span><span class="o">)</span> <span class="o">:</span>
+</span><span class='line'>                         <span class="k">new</span> <span class="nf">ConfigChooser</span><span class="o">(</span><span class="mi">5</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">depth</span><span class="o">,</span> <span class="n">stencil</span><span class="o">)</span> <span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Creates OpenGL contexts. */</span>
+</span><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ContextFactory</span> <span class="kd">implements</span>
+</span><span class='line'>    <span class="n">GLSurfaceView</span><span class="o">.</span><span class="na">EGLContextFactory</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">EGL_CONTEXT_CLIENT_VERSION</span> <span class="o">=</span> <span class="mh">0x3098</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">EGLContext</span> <span class="nf">createContext</span><span class="o">(</span><span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">,</span>
+</span><span class='line'>        <span class="n">EGLConfig</span> <span class="n">eglConfig</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">EGLContext</span> <span class="n">context</span><span class="o">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">mUseOpenGLES2</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGI</span><span class="o">(</span><span class="s">&quot;Creating OpenGL ES 2.0 context&quot;</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">checkEglError</span><span class="o">(</span><span class="s">&quot;Before eglCreateContext&quot;</span><span class="o">,</span> <span class="n">egl</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span><span class="o">[]</span> <span class="n">attrib_list_gl20</span> <span class="o">=</span> <span class="o">{</span><span class="n">EGL_CONTEXT_CLIENT_VERSION</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NONE</span><span class="o">};</span>
+</span><span class='line'>            <span class="n">context</span> <span class="o">=</span> <span class="n">egl</span><span class="o">.</span><span class="na">eglCreateContext</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">eglConfig</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NO_CONTEXT</span><span class="o">,</span> <span class="n">attrib_list_gl20</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGI</span><span class="o">(</span><span class="s">&quot;Creating OpenGL ES 1.x context&quot;</span><span class="o">);</span>
+</span><span class='line'>            <span class="n">checkEglError</span><span class="o">(</span><span class="s">&quot;Before eglCreateContext&quot;</span><span class="o">,</span> <span class="n">egl</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span><span class="o">[]</span> <span class="n">attrib_list_gl1x</span> <span class="o">=</span> <span class="o">{</span><span class="n">EGL_CONTEXT_CLIENT_VERSION</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NONE</span><span class="o">};</span>
+</span><span class='line'>            <span class="n">context</span> <span class="o">=</span> <span class="n">egl</span><span class="o">.</span><span class="na">eglCreateContext</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">eglConfig</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NO_CONTEXT</span><span class="o">,</span> <span class="n">attrib_list_gl1x</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">checkEglError</span><span class="o">(</span><span class="s">&quot;After eglCreateContext&quot;</span><span class="o">,</span> <span class="n">egl</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">context</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">destroyContext</span><span class="o">(</span><span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">,</span>
+</span><span class='line'>        <span class="n">EGLContext</span> <span class="n">context</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">egl</span><span class="o">.</span><span class="na">eglDestroyContext</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">context</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** Checks the OpenGL error. */</span>
+</span><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">checkEglError</span><span class="o">(</span><span class="n">String</span> <span class="n">prompt</span><span class="o">,</span> <span class="n">EGL10</span> <span class="n">egl</span><span class="o">)</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">error</span><span class="o">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="o">((</span><span class="n">error</span> <span class="o">=</span> <span class="n">egl</span><span class="o">.</span><span class="na">eglGetError</span><span class="o">())</span> <span class="o">!=</span> <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_SUCCESS</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGE</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;%s: EGL error: 0x%x&quot;</span><span class="o">,</span> <span class="n">prompt</span><span class="o">,</span> <span class="n">error</span><span class="o">));</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/** The config chooser. */</span>
+</span><span class='line'><span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">ConfigChooser</span> <span class="kd">implements</span> <span class="n">GLSurfaceView</span><span class="o">.</span><span class="na">EGLConfigChooser</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="nf">ConfigChooser</span><span class="o">(</span><span class="kt">int</span> <span class="n">r</span><span class="o">,</span> <span class="kt">int</span> <span class="n">g</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">,</span> <span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="o">,</span> <span class="kt">int</span> <span class="n">stencil</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">mRedSize</span> <span class="o">=</span> <span class="n">r</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">mGreenSize</span> <span class="o">=</span> <span class="n">g</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">mBlueSize</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">mAlphaSize</span> <span class="o">=</span> <span class="n">a</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">mDepthSize</span> <span class="o">=</span> <span class="n">depth</span><span class="o">;</span>
+</span><span class='line'>        <span class="n">mStencilSize</span> <span class="o">=</span> <span class="n">stencil</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="n">EGLConfig</span> <span class="nf">getMatchingConfig</span><span class="o">(</span><span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">,</span>
+</span><span class='line'>        <span class="kt">int</span><span class="o">[]</span> <span class="n">configAttribs</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// Get the number of minimally matching EGL configurations</span>
+</span><span class='line'>        <span class="kt">int</span><span class="o">[]</span> <span class="n">num_config</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'>        <span class="n">egl</span><span class="o">.</span><span class="na">eglChooseConfig</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">configAttribs</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="n">num_config</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">numConfigs</span> <span class="o">=</span> <span class="n">num_config</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">numConfigs</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;=</span> <span class="mi">0</span><span class="o">)</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">&quot;No matching EGL configs&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Allocate then read the array of minimally matching EGL configs</span>
+</span><span class='line'>        <span class="n">EGLConfig</span><span class="o">[]</span> <span class="n">configs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">EGLConfig</span><span class="o">[</span><span class="n">numConfigs</span><span class="o">];</span>
+</span><span class='line'>        <span class="n">egl</span><span class="o">.</span><span class="na">eglChooseConfig</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">configAttribs</span><span class="o">,</span> <span class="n">configs</span><span class="o">,</span> <span class="n">numConfigs</span><span class="o">,</span>
+</span><span class='line'>            <span class="n">num_config</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Now return the &quot;best&quot; one</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nf">chooseConfig</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">configs</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">EGLConfig</span> <span class="nf">chooseConfig</span><span class="o">(</span><span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">mUseOpenGLES2</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="c1">// This EGL config specification is used to specify 2.0</span>
+</span><span class='line'>            <span class="c1">// rendering. We use a minimum size of 4 bits for</span>
+</span><span class='line'>            <span class="c1">// red/green/blue, but will perform actual matching in</span>
+</span><span class='line'>            <span class="c1">// chooseConfig() below.</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="kt">int</span> <span class="n">EGL_OPENGL_ES2_BIT</span> <span class="o">=</span> <span class="mh">0x0004</span><span class="o">;</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">s_configAttribs_gl20</span> <span class="o">=</span>
+</span><span class='line'>            <span class="o">{</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_RED_SIZE</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_GREEN_SIZE</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_BLUE_SIZE</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_RENDERABLE_TYPE</span><span class="o">,</span> <span class="n">EGL_OPENGL_ES2_BIT</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NONE</span>
+</span><span class='line'>            <span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="nf">getMatchingConfig</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">s_configAttribs_gl20</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="kt">int</span> <span class="n">EGL_OPENGL_ES1X_BIT</span> <span class="o">=</span> <span class="mh">0x0001</span><span class="o">;</span>
+</span><span class='line'>            <span class="kd">final</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">s_configAttribs_gl1x</span> <span class="o">=</span>
+</span><span class='line'>            <span class="o">{</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_RED_SIZE</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_GREEN_SIZE</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_BLUE_SIZE</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_RENDERABLE_TYPE</span><span class="o">,</span> <span class="n">EGL_OPENGL_ES1X_BIT</span><span class="o">,</span>
+</span><span class='line'>                <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_NONE</span>
+</span><span class='line'>            <span class="o">};</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span> <span class="nf">getMatchingConfig</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">s_configAttribs_gl1x</span><span class="o">);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">EGLConfig</span> <span class="nf">chooseConfig</span><span class="o">(</span>
+</span><span class='line'>        <span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">,</span> <span class="n">EGLConfig</span><span class="o">[]</span> <span class="n">configs</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">for</span><span class="o">(</span><span class="n">EGLConfig</span> <span class="n">config</span> <span class="o">:</span> <span class="n">configs</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">{</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                    <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_DEPTH_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                    <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_STENCIL_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// We need at least mDepthSize and mStencilSize bits</span>
+</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">d</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">mDepthSize</span> <span class="o">||</span> <span class="n">s</span> <span class="o">&amp;</span><span class="n">lt</span><span class="o">;</span> <span class="n">mStencilSize</span><span class="o">)</span>
+</span><span class='line'>                <span class="k">continue</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// We want an *exact* match for red/green/blue/alpha</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                    <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_RED_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">g</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                        <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_GREEN_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                        <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_BLUE_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>            <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">findConfigAttrib</span><span class="o">(</span><span class="n">egl</span><span class="o">,</span> <span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span>
+</span><span class='line'>                    <span class="n">EGL10</span><span class="o">.</span><span class="na">EGL_ALPHA_SIZE</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">==</span> <span class="n">mRedSize</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span>
+</span><span class='line'>                <span class="n">g</span> <span class="o">==</span> <span class="n">mGreenSize</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span>
+</span><span class='line'>                <span class="n">b</span> <span class="o">==</span> <span class="n">mBlueSize</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">amp</span><span class="o">;</span>
+</span><span class='line'>                <span class="n">a</span> <span class="o">==</span> <span class="n">mAlphaSize</span><span class="o">)</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">config</span><span class="o">;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">findConfigAttrib</span><span class="o">(</span>
+</span><span class='line'>        <span class="n">EGL10</span> <span class="n">egl</span><span class="o">,</span> <span class="n">EGLDisplay</span> <span class="n">display</span><span class="o">,</span> <span class="n">EGLConfig</span> <span class="n">config</span><span class="o">,</span> <span class="kt">int</span> <span class="n">attribute</span><span class="o">,</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">defaultValue</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">egl</span><span class="o">.</span><span class="na">eglGetConfigAttrib</span><span class="o">(</span><span class="n">display</span><span class="o">,</span> <span class="n">config</span><span class="o">,</span> <span class="n">attribute</span><span class="o">,</span> <span class="n">mValue</span><span class="o">))</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">mValue</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">defaultValue</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Subclasses can adjust these values:</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mRedSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mGreenSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mBlueSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mAlphaSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mDepthSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">protected</span> <span class="kt">int</span> <span class="n">mStencilSize</span><span class="o">;</span>
+</span><span class='line'>    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">mValue</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>首先在這<code>Code</code>當中，主要是用來<code>Initialization GLView</code>，也許是因為<code>OpenGL ES</code>版本差異？<code>Initialization</code>主要有三件事情：</p>
+
+<ul>
+<li>偵測並確認<code>OpenGL ES</code>版本</li>
+<li>EGLContextFactory</li>
+<li>EGLConfigChooser</li>
+</ul>
+
+
+<p>根據尋找的結果是，在<code>OpenGL</code>當中，在進行<code>Render</code>(渲染？)需要先進行<code>EGLContextFactory</code>和<code>EGLConfigChooser</code>，什麼是<code>Render</code>？可以參考一下<a href="http://zh.wikipedia.org/wiki/%E6%B8%B2%E6%9F%93">渲染-Wiki</a>，主要就是：幾何、視點、紋理以及照明訊息。老實說，完全不明白…看樣子需要去學個電腦圖學會更清楚才對。說真的<code>OpenGL</code>的程式，真的跟天書一樣…後來了解到，這只是設定<code>OpenGL ES</code>所可能需要用到的東西，大概是因為需要進行<code>3D</code>的貼圖吧！所以才需要這些幾何、視點等資料，為了讓<code>Render</code>的物件更逼真！？後來看到主程式的<code>Code</code>大概也說明了這件事情。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>ImageTargets.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kt">void</span> <span class="n">initApplicationAR</span><span class="o">()</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="c1">// Do application initialization in native code (e.g. registering</span>
+</span><span class='line'>    <span class="c1">// callbacks, etc.):</span>
+</span><span class='line'>    <span class="n">initApplicationNative</span><span class="o">(</span><span class="n">mScreenWidth</span><span class="o">,</span> <span class="n">mScreenHeight</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Create OpenGL ES view:</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">depthSize</span> <span class="o">=</span> <span class="mi">16</span><span class="o">;</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">stencilSize</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>    <span class="kt">boolean</span> <span class="n">translucent</span> <span class="o">=</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">requiresAlpha</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mGlView</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QCARSampleGLView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">mGlView</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="n">mQCARFlags</span><span class="o">,</span> <span class="n">translucent</span><span class="o">,</span> <span class="n">depthSize</span><span class="o">,</span> <span class="n">stencilSize</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mRenderer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageTargetsRenderer</span><span class="o">();</span>
+</span><span class='line'>    <span class="n">mRenderer</span><span class="o">.</span><span class="na">mActivity</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+</span><span class='line'>    <span class="n">mGlView</span><span class="o">.</span><span class="na">setRenderer</span><span class="o">(</span><span class="n">mRenderer</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">LayoutInflater</span> <span class="n">inflater</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">mUILayout</span> <span class="o">=</span> <span class="o">(</span><span class="n">RelativeLayout</span><span class="o">)</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">camera_overlay</span><span class="o">,</span>
+</span><span class='line'>            <span class="kc">null</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mUILayout</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">mUILayout</span><span class="o">.</span><span class="na">setBackgroundColor</span><span class="o">(</span><span class="n">Color</span><span class="o">.</span><span class="na">BLACK</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Gets a reference to the loading dialog</span>
+</span><span class='line'>    <span class="n">mLoadingDialogContainer</span> <span class="o">=</span> <span class="n">mUILayout</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">loading_indicator</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Shows the loading indicator at start</span>
+</span><span class='line'>    <span class="n">loadingDialogHandler</span><span class="o">.</span><span class="na">sendEmptyMessage</span><span class="o">(</span><span class="n">SHOW_LOADING_DIALOG</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Adds the inflated layout to the view</span>
+</span><span class='line'>    <span class="n">addContentView</span><span class="o">(</span><span class="n">mUILayout</span><span class="o">,</span> <span class="k">new</span> <span class="n">LayoutParams</span><span class="o">(</span><span class="n">LayoutParams</span><span class="o">.</span><span class="na">MATCH_PARENT</span><span class="o">,</span>
+</span><span class='line'>            <span class="n">LayoutParams</span><span class="o">.</span><span class="na">MATCH_PARENT</span><span class="o">));</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>還有另外一個<code>Code</code>專門處理<code>Render</code>，在這主要的<code>initApplicationAR</code>當中，先建立一個<code>GLView</code>然後是先前貼的<code>QCARSampleGLView.java</code>接著在<code>initialization</code>放入需要的參數。接著建立<code>Renderer</code>這<code>Code</code>為<code>ImageTargetsRenderer.java</code>寫到這邊我突然很想要把這些Code直接複製就好了，感覺應該是要可以通用才對。總之，建立完<code>GLView</code>需要加入<code>Renderer</code>而在<code>ImageTargetsRenderer.java</code>當中，在繪圖的<code>function</code>為<code>renderFrame()</code>這部分是<code>Native code</code>之後會再繼續補充。最後會把<code>GLView</code>加入到ContentView當中。<code>               addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</code>。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>lang=java </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/*==============================================================================&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>        Copyright (c) 2010-2012 QUALCOMM Austria Research Center GmbH.
+</span><span class='line'>        All Rights Reserved.
+</span><span class='line'>        Qualcomm Confidential and Proprietary
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@file&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ImageTargetsRenderer.java
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@brief&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Sample for ImageTargets
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>==============================================================================*/&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>package com.qualcomm.QCARSamples.ImageTargets;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>import javax.microedition.khronos.egl.EGLConfig;
+</span><span class='line'>import javax.microedition.khronos.opengles.GL10;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>import android.opengl.GLSurfaceView;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>import com.qualcomm.QCAR.QCAR;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/&lt;em>* The renderer class for the ImageTargets sample. &lt;/em>/
+</span><span class='line'>public class ImageTargetsRenderer implements GLSurfaceView.Renderer
+</span><span class='line'>{&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>public boolean mIsActive = false;
+</span><span class='line'>
+</span><span class='line'>/** Reference to main activity **/
+</span><span class='line'>public ImageTargets mActivity;
+</span><span class='line'>
+</span><span class='line'>/** Native function for initializing the renderer. */
+</span><span class='line'>public native void initRendering();
+</span><span class='line'>
+</span><span class='line'>/** Native function to update the renderer. */
+</span><span class='line'>public native void updateRendering(int width, int height);
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>/** Called when the surface is created or recreated. */
+</span><span class='line'>public void onSurfaceCreated(GL10 gl, EGLConfig config)
+</span><span class='line'>{
+</span><span class='line'>    DebugLog.LOGD("GLRenderer::onSurfaceCreated");
+</span><span class='line'>
+</span><span class='line'>    // Call native function to initialize rendering:
+</span><span class='line'>    initRendering();
+</span><span class='line'>
+</span><span class='line'>    // Call QCAR function to (re)initialize rendering after first use
+</span><span class='line'>    // or after OpenGL ES context was lost (e.g. after onPause/onResume):
+</span><span class='line'>    QCAR.onSurfaceCreated();
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>/** Called when the surface changed size. */
+</span><span class='line'>public void onSurfaceChanged(GL10 gl, int width, int height)
+</span><span class='line'>{
+</span><span class='line'>    DebugLog.LOGD("GLRenderer::onSurfaceChanged");
+</span><span class='line'>
+</span><span class='line'>    // Call native function to update rendering when render surface
+</span><span class='line'>    // parameters have changed:
+</span><span class='line'>    updateRendering(width, height);
+</span><span class='line'>
+</span><span class='line'>    // Call QCAR function to handle render surface size changes:
+</span><span class='line'>    QCAR.onSurfaceChanged(width, height);
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>/** The native render function. */
+</span><span class='line'>public native void renderFrame();
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>/** Called to draw the current frame. */
+</span><span class='line'>public void onDrawFrame(GL10 gl)
+</span><span class='line'>{
+</span><span class='line'>    if (!mIsActive)
+</span><span class='line'>        return;
+</span><span class='line'>
+</span><span class='line'>    // Update render view (projection matrix and viewport) if needed:
+</span><span class='line'>    mActivity.updateRenderView();
+</span><span class='line'>
+</span><span class='line'>    // Call our native function to render content
+</span><span class='line'>    renderFrame();
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[JNI在Eclipse的使用]]></title>
