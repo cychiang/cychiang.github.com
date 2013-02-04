@@ -800,8 +800,8 @@
 
 <p>還有另外一個<code>Code</code>專門處理<code>Render</code>，在這主要的<code>initApplicationAR</code>當中，先建立一個<code>GLView</code>然後是先前貼的<code>QCARSampleGLView.java</code>接著在<code>initialization</code>放入需要的參數。接著建立<code>Renderer</code>這<code>Code</code>為<code>ImageTargetsRenderer.java</code>寫到這邊我突然很想要把這些Code直接複製就好了，感覺應該是要可以通用才對。總之，建立完<code>GLView</code>需要加入<code>Renderer</code>而在<code>ImageTargetsRenderer.java</code>當中，在繪圖的<code>function</code>為<code>renderFrame()</code>這部分是<code>Native code</code>之後會再繼續補充。最後會把<code>GLView</code>加入到ContentView當中。<code>               addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</code>。</p>
 
-<figure class='code'><figcaption><span>lang=java </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>ImageTargetsRenderer.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -885,90 +885,91 @@
 <span class='line-number'>82</span>
 <span class='line-number'>83</span>
 <span class='line-number'>84</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/*==============================================================================
-</span><span class='line'>            Copyright (c) 2010-2012 QUALCOMM Austria Research Center GmbH.
-</span><span class='line'>            All Rights Reserved.
-</span><span class='line'>            Qualcomm Confidential and Proprietary
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="cm">/*==============================================================================</span>
+</span><span class='line'><span class="cm">            Copyright (c) 2010-2012 QUALCOMM Austria Research Center GmbH.</span>
+</span><span class='line'><span class="cm">            All Rights Reserved.</span>
+</span><span class='line'><span class="cm">            Qualcomm Confidential and Proprietary</span>
 </span><span class='line'>
-</span><span class='line'>@file
-</span><span class='line'>    ImageTargetsRenderer.java
+</span><span class='line'><span class="cm">@file</span>
+</span><span class='line'><span class="cm">    ImageTargetsRenderer.java</span>
 </span><span class='line'>
-</span><span class='line'>@brief
-</span><span class='line'>    Sample for ImageTargets
+</span><span class='line'><span class="cm">@brief</span>
+</span><span class='line'><span class="cm">    Sample for ImageTargets</span>
 </span><span class='line'>
-</span><span class='line'>==============================================================================*/
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>package com.qualcomm.QCARSamples.ImageTargets;
-</span><span class='line'>
-</span><span class='line'>import javax.microedition.khronos.egl.EGLConfig;
-</span><span class='line'>import javax.microedition.khronos.opengles.GL10;
-</span><span class='line'>
-</span><span class='line'>import android.opengl.GLSurfaceView;
-</span><span class='line'>
-</span><span class='line'>import com.qualcomm.QCAR.QCAR;
+</span><span class='line'><span class="cm">==============================================================================*/</span>
 </span><span class='line'>
 </span><span class='line'>
-</span><span class='line'>/** The renderer class for the ImageTargets sample. */
-</span><span class='line'>public class ImageTargetsRenderer implements GLSurfaceView.Renderer
-</span><span class='line'>{
-</span><span class='line'>    public boolean mIsActive = false;
+</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">qualcomm</span><span class="o">.</span><span class="na">QCARSamples</span><span class="o">.</span><span class="na">ImageTargets</span><span class="o">;</span>
 </span><span class='line'>
-</span><span class='line'>    /** Reference to main activity **/
-</span><span class='line'>    public ImageTargets mActivity;
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.microedition.khronos.egl.EGLConfig</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">javax.microedition.khronos.opengles.GL10</span><span class="o">;</span>
 </span><span class='line'>
-</span><span class='line'>    /** Native function for initializing the renderer. */
-</span><span class='line'>    public native void initRendering();
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.opengl.GLSurfaceView</span><span class="o">;</span>
 </span><span class='line'>
-</span><span class='line'>    /** Native function to update the renderer. */
-</span><span class='line'>    public native void updateRendering(int width, int height);
+</span><span class='line'><span class="kn">import</span> <span class="nn">com.qualcomm.QCAR.QCAR</span><span class="o">;</span>
 </span><span class='line'>
 </span><span class='line'>
-</span><span class='line'>    /** Called when the surface is created or recreated. */
-</span><span class='line'>    public void onSurfaceCreated(GL10 gl, EGLConfig config)
-</span><span class='line'>    {
-</span><span class='line'>        DebugLog.LOGD("GLRenderer::onSurfaceCreated");
+</span><span class='line'><span class="cm">/** The renderer class for the ImageTargets sample. */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ImageTargetsRenderer</span> <span class="kd">implements</span> <span class="n">GLSurfaceView</span><span class="o">.</span><span class="na">Renderer</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">mIsActive</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 </span><span class='line'>
-</span><span class='line'>        // Call native function to initialize rendering:
-</span><span class='line'>        initRendering();
+</span><span class='line'>    <span class="cm">/** Reference to main activity **/</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="n">ImageTargets</span> <span class="n">mActivity</span><span class="o">;</span>
 </span><span class='line'>
-</span><span class='line'>        // Call QCAR function to (re)initialize rendering after first use
-</span><span class='line'>        // or after OpenGL ES context was lost (e.g. after onPause/onResume):
-</span><span class='line'>        QCAR.onSurfaceCreated();
-</span><span class='line'>    }
+</span><span class='line'>    <span class="cm">/** Native function for initializing the renderer. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">initRendering</span><span class="o">();</span>
 </span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>    /** Called when the surface changed size. */
-</span><span class='line'>    public void onSurfaceChanged(GL10 gl, int width, int height)
-</span><span class='line'>    {
-</span><span class='line'>        DebugLog.LOGD("GLRenderer::onSurfaceChanged");
-</span><span class='line'>
-</span><span class='line'>        // Call native function to update rendering when render surface
-</span><span class='line'>        // parameters have changed:
-</span><span class='line'>        updateRendering(width, height);
-</span><span class='line'>
-</span><span class='line'>        // Call QCAR function to handle render surface size changes:
-</span><span class='line'>        QCAR.onSurfaceChanged(width, height);
-</span><span class='line'>    }
+</span><span class='line'>    <span class="cm">/** Native function to update the renderer. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">updateRendering</span><span class="o">(</span><span class="kt">int</span> <span class="n">width</span><span class="o">,</span> <span class="kt">int</span> <span class="n">height</span><span class="o">);</span>
 </span><span class='line'>
 </span><span class='line'>
-</span><span class='line'>    /** The native render function. */
-</span><span class='line'>    public native void renderFrame();
+</span><span class='line'>    <span class="cm">/** Called when the surface is created or recreated. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSurfaceCreated</span><span class="o">(</span><span class="n">GL10</span> <span class="n">gl</span><span class="o">,</span> <span class="n">EGLConfig</span> <span class="n">config</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGD</span><span class="o">(</span><span class="s">&quot;GLRenderer::onSurfaceCreated&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Call native function to initialize rendering:</span>
+</span><span class='line'>        <span class="n">initRendering</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Call QCAR function to (re)initialize rendering after first use</span>
+</span><span class='line'>        <span class="c1">// or after OpenGL ES context was lost (e.g. after onPause/onResume):</span>
+</span><span class='line'>        <span class="n">QCAR</span><span class="o">.</span><span class="na">onSurfaceCreated</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
 </span><span class='line'>
 </span><span class='line'>
-</span><span class='line'>    /** Called to draw the current frame. */
-</span><span class='line'>    public void onDrawFrame(GL10 gl)
-</span><span class='line'>    {
-</span><span class='line'>        if (!mIsActive)
-</span><span class='line'>            return;
+</span><span class='line'>    <span class="cm">/** Called when the surface changed size. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSurfaceChanged</span><span class="o">(</span><span class="n">GL10</span> <span class="n">gl</span><span class="o">,</span> <span class="kt">int</span> <span class="n">width</span><span class="o">,</span> <span class="kt">int</span> <span class="n">height</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGD</span><span class="o">(</span><span class="s">&quot;GLRenderer::onSurfaceChanged&quot;</span><span class="o">);</span>
 </span><span class='line'>
-</span><span class='line'>        // Update render view (projection matrix and viewport) if needed:
-</span><span class='line'>        mActivity.updateRenderView();
+</span><span class='line'>        <span class="c1">// Call native function to update rendering when render surface</span>
+</span><span class='line'>        <span class="c1">// parameters have changed:</span>
+</span><span class='line'>        <span class="n">updateRendering</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">);</span>
 </span><span class='line'>
-</span><span class='line'>        // Call our native function to render content
-</span><span class='line'>        renderFrame();
-</span><span class='line'>    }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>        <span class="c1">// Call QCAR function to handle render surface size changes:</span>
+</span><span class='line'>        <span class="n">QCAR</span><span class="o">.</span><span class="na">onSurfaceChanged</span><span class="o">(</span><span class="n">width</span><span class="o">,</span> <span class="n">height</span><span class="o">);</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/** The native render function. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">renderFrame</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/** Called to draw the current frame. */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDrawFrame</span><span class="o">(</span><span class="n">GL10</span> <span class="n">gl</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(!</span><span class="n">mIsActive</span><span class="o">)</span>
+</span><span class='line'>            <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Update render view (projection matrix and viewport) if needed:</span>
+</span><span class='line'>        <span class="n">mActivity</span><span class="o">.</span><span class="na">updateRenderView</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Call our native function to render content</span>
+</span><span class='line'>        <span class="n">renderFrame</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
   
