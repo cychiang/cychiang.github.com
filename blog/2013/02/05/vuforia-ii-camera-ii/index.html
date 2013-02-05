@@ -454,7 +454,7 @@
 
 <p>在這段<code>InitQCARTask()</code>主要的<code>protected Boolean doInBackground(Void... params)</code>裡面，就兩件事情比較重要<code>QCAR.setInitParameters(cameraDemo.this, mQCARFlags);</code>和<code>QCAR.init()</code>但是！<code>QCAR.setInitParameters()</code>有點奇怪，因為在<a href="https://developer.vuforia.com/resources/api/namespace_q_c_a_r#a2e798f9af51c11ee0e13e2f9e32449a7">官方API當中</a>裡面參數只有一個，這是官方API寫的<code>int QCAR_API QCAR::setInitParameters ( int flags )</code>所以讓我覺得有點奇怪，為什麼會多一個<code>Activity</code>的參數，不過既然都需要，就塞進去吧。最後還需要一個<code>QCAR.init()</code>在這邊官方API說明為<code>Initializes QCAR.</code>詳細怎樣<code>Initializes</code>也沒有說明很清楚。不過有一個<code>iOS</code>的說明，整段說明為：<code>iOS: Called to initialize QCAR. Initialization is progressive, so this function should be called repeatedly until it returns 100 or a negative value. Returns an integer representing the percentage complete (negative on error).</code>，所以，看來就是這一個<code>doInBackground(Void… params)</code>會一直執行直到<code>mProgressValue</code>為100!整個就是讀取條，很酷。那基本上這邊就是只有進行<code>Initialization QCAR</code>的功用，最後完成時會進入到<code>onPostExecute()</code>，然後呼叫<code>updateApplicationStatus(APPSTATUS_INIT_TRACKER);</code>這邊又是另外一段<code>function</code>的開始，我在想，不要搞<code>Task</code>直接用應該也是可以，只是可能比較不保險！？接下來我們看一下<code>case APPSTATUS_INIT_TRACKER:</code>主要有一個<code>function</code>就是<code>initTracker()</code>這個是<code>native code</code>不得已只好先跳到<code>native code</code>來<code>trace</code>。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.cpp ++ </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.cpp  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -472,8 +472,8 @@
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">JNIEXPORT</span> <span class="kt">int</span> <span class="n">JNICALL</span>
-</span><span class='line'><span class="nf">Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">)</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">JNIEXPORT</span> <span class="kt">int</span> <span class="n">JNICALL</span>
+</span><span class='line'><span class="n">Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">)</span>
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>    <span class="n">LOG</span><span class="p">(</span><span class="s">&quot;Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker&quot;</span><span class="p">);</span>
 </span><span class='line'>
