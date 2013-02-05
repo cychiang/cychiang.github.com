@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-05T21:02:54+08:00</updated>
+  <updated>2013-02-05T21:09:51+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -20,7 +20,7 @@
     <id>http://cychiang.github.com/blog/2013/02/05/vuforia-ii-camera-ii</id>
     <content type="html"><![CDATA[<p>經過比對vuforia的<code>Sample code</code>更加確定了幾件事情，就是很多基本的<code>Code</code>都是可以重複用的，例如：<code>Initial</code>的流程或是<code>jni</code>的設定等，大部份都是一樣的。除了特別用途需要用到特別的功能之外，基本上架構都是一樣。基於這個原因，我開始把可以重復用的部分抽離出來，建立一個<code>Template</code>，以後在用的時候就可以直接拿這個<code>Template</code>來新增、修改或是弄些比較有趣的<code>Demo</code>。我也將我所完成的<a href="https://github.com/cychiang/vuforiaDemo.git">Code</a>放到<a href="https://github.com/">github</a>上，也趁機熟悉一下git版本控制。老實說一個main_activity就要1xxx行，對我來講，真是有點看不下去。大致上知道流程，所以趁著還記憶猶新的時候，開始備忘一下。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -54,7 +54,7 @@
 
 <p>首先我們針對<code>onCreate</code>的程式進入點當中來進行說明。在這邊當中，其實有些部分可以先行拿掉，如果只是要開啟<code>Camera</code>的功能的話，首先前面的<code>DebugLog</code>和<code>super.onCreate</code>等說明應該不用了。在<code>loadTextures()</code>當中，就是(前一篇Vuforia-II Camera)[http://cychiang.github.com/blog/2013/02/04/vuforia-ii-camera/]所提到的對於電腦圖學我需要的一些東西，詳細可以參考一下Wiki的說明，簡單說就是貼皮膚上去！就像穿衣服。而在<code>getInitializationFlags();</code>當中，主要是偵測<code>Device</code>支援的<code>OpenGL ES</code>的版本，那這部分會再呼叫<code>Native code</code>來解決，這部分未來會針對<code>Native code</code>部分進行說明。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -110,7 +110,7 @@
 
 <p>先釐清之後會比較了解之後程式的走向。在<code>onCreate()</code>當中，傳入的參數為<code>APPSTATUS_INIT_APP</code>，也就是<code>0</code>對應到接下來的<code>updateApplicationStatus(int appStatus)</code>當中會是在<code>case APPSTATUS_INIT_APP:</code>的區段裡面，而這裡面的執行內容是先執行<code>initApplication()</code>完成之後，執行<code>updateApplicationSatus(APPSTATUS_INIT_QCAR)</code>，也就是說，執行完成後會再重新進入這個<code>function</code>而帶入的參數是<code>APPSTATUS_INIT_QCAR</code>接下來，我們看一下<code>initApplication()</code>在進行哪些事情。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -192,7 +192,7 @@
 
 <p>在這段<code>function</code>似乎沒有進行什麼特別的<code>init</code>，全不可以看到的就是偵測目前裝置的方向就是你是拿直的還是橫的情況，而也會有一個<code>function</code>來記錄目前<code>screen</code>的狀態，應該是可以不用特別去了解細節。可能是因為要<code>Render</code>東西需要考慮方向性問題吧！好了，既然知道這邊是確定螢幕的方向內容，那可以先繼續下一步，也就是<code>updateApplicationStatus(APPSTATUS_INIT_QCAR);</code>，這邊在<code>case APPSTATUS_INIT_QCAR</code>當中主要是建立一個<code>Task</code>而這個<code>Task</code>為<code>InitQCARTask()</code>，接下來就進入我們<code>InitQCARTask()</code>來進行說明。然而需要注意一點就是，這邊在實現上為另外建立一個<code>Task</code>所以這邊是先<code>mInitQCARTask = new InitQCARTask();</code>接著<code>mInitQCARTask.execute()</code>。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -368,7 +368,7 @@
 
 <p>在這段<code>InitQCARTask()</code>主要的<code>protected Boolean doInBackground(Void... params)</code>裡面，就兩件事情比較重要<code>QCAR.setInitParameters(cameraDemo.this, mQCARFlags);</code>和<code>QCAR.init()</code>但是！<code>QCAR.setInitParameters()</code>有點奇怪，因為在<a href="https://developer.vuforia.com/resources/api/namespace_q_c_a_r#a2e798f9af51c11ee0e13e2f9e32449a7">官方API當中</a>裡面參數只有一個，這是官方API寫的<code>int QCAR_API QCAR::setInitParameters ( int flags )</code>所以讓我覺得有點奇怪，為什麼會多一個<code>Activity</code>的參數，不過既然都需要，就塞進去吧。最後還需要一個<code>QCAR.init()</code>在這邊官方API說明為<code>Initializes QCAR.</code>詳細怎樣<code>Initializes</code>也沒有說明很清楚。不過有一個<code>iOS</code>的說明，整段說明為：<code>iOS: Called to initialize QCAR. Initialization is progressive, so this function should be called repeatedly until it returns 100 or a negative value. Returns an integer representing the percentage complete (negative on error).</code>，所以，看來就是這一個<code>doInBackground(Void… params)</code>會一直執行直到<code>mProgressValue</code>為100!整個就是讀取條，很酷。那基本上這邊就是只有進行<code>Initialization QCAR</code>的功用，最後完成時會進入到<code>onPostExecute()</code>，然後呼叫<code>updateApplicationStatus(APPSTATUS_INIT_TRACKER);</code>這邊又是另外一段<code>function</code>的開始，我在想，不要搞<code>Task</code>直接用應該也是可以，只是可能比較不保險！？接下來我們看一下<code>case APPSTATUS_INIT_TRACKER:</code>主要有一個<code>function</code>就是<code>initTracker()</code>這個是<code>native code</code>不得已只好先跳到<code>native code</code>來<code>trace</code>。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.cpp lang=c++ </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.cpp ++ </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -386,8 +386,8 @@
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">JNIEXPORT</span> <span class="kt">int</span> <span class="n">JNICALL</span>
-</span><span class='line'><span class="n">Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">)</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">JNIEXPORT</span> <span class="kt">int</span> <span class="n">JNICALL</span>
+</span><span class='line'><span class="nf">Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">)</span>
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>    <span class="n">LOG</span><span class="p">(</span><span class="s">&quot;Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker&quot;</span><span class="p">);</span>
 </span><span class='line'>
@@ -416,7 +416,7 @@
 
 <p>在完成這些動作之後，接著進入<code>updateApplicationStatus(APPSTATUS_INIT_APP_AR);</code>今天寫到這邊，改天繼續說明和<code>Trace</code>。</p>
 
-<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>cameraDemo.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -696,7 +696,7 @@
 
 <p>以上大概是每個範例程式所會進行的事情，那在這當中最基本的大概就是開啟<code>Camera</code>吧！在建立完專案之後，先加入一下使用Camera的權限到Android程式當中。</p>
 
-<figure class='code'><figcaption><span>AndroidManifest.xml lang=xml </span></figcaption>
+<figure class='code'><figcaption><span>AndroidManifest.xml  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -769,7 +769,7 @@
 <p>根據之前分析的範例程式的結果，裡面分為幾個步驟：<code>Init_QCAR</code>-><code>Init_Tracker</code>-><code>InitApp_AR</code>-><code>InitLoader_Tracker</code>詳細過程內容，看看之後有沒有興趣補上，以上名字不一定正確因為是自己寫的簡解XD，但是都在vuforia範例程式當中可以找到。那在<code>Init_QCAR</code>以及<code>Init_Tracker</code>當中，主要是讀取<code>QCAR</code>的<code>Library</code>也就是<code>vuforia</code>在<code>Init_Tracker</code>當中，為讀取資料庫，資料庫是什麼東西？可以參考<a href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/">Vuforia-I</a>的文章。
 在這範例程式當中，使用了<code>OpenGL ES</code>來當作繪圖的主要工具之一，其中也有一大段的<code>Code</code>在偵測平台支援<code>OpenGL ES 1.1 or OpenGL ES 2.0</code>在Camera讀取影像並且貼到<code>GLSurfaceView</code>這部分是必需要能釐清的部分，而這中間包含了一些<code>OpenGL ES</code>的寫法，說真的也不是很了解XD。總覺得需要寫很久…就分部分寫吧！先來了解一下<code>Sample Code</code>它所提寫的<code>QCARSampleGLView.java</code>，其實裡面有很多設定完全不知所以然，在這邊就慢慢解說和了解這<code>Code</code>所需要完成的事情。了解之後也比較好釐清一個<code>OpenGL ES</code>程式該怎樣寫。整段貼上，連同聲明！</p>
 
-<figure class='code'><figcaption><span>QCARSampleGLView.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>QCARSampleGLView.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1296,7 +1296,7 @@
 
 <p>根據尋找的結果是，在<code>OpenGL</code>當中，在進行<code>Render</code>(渲染？)需要先進行<code>EGLContextFactory</code>和<code>EGLConfigChooser</code>，什麼是<code>Render</code>？可以參考一下<a href="http://zh.wikipedia.org/wiki/%E6%B8%B2%E6%9F%93">渲染-Wiki</a>，主要就是：幾何、視點、紋理以及照明訊息。老實說，完全不明白…看樣子需要去學個電腦圖學會更清楚才對。說真的<code>OpenGL</code>的程式，真的跟天書一樣…後來了解到，這只是設定<code>OpenGL ES</code>所可能需要用到的東西，大概是因為需要進行<code>3D</code>的貼圖吧！所以才需要這些幾何、視點等資料，為了讓<code>Render</code>的物件更逼真！？後來看到主程式的<code>Code</code>大概也說明了這件事情。</p>
 
-<figure class='code'><figcaption><span>ImageTargets.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>ImageTargets.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1372,7 +1372,7 @@
 
 <p>還有另外一個<code>Code</code>專門處理<code>Render</code>，在這主要的<code>initApplicationAR</code>當中，先建立一個<code>GLView</code>然後是先前貼的<code>QCARSampleGLView.java</code>接著在<code>initialization</code>放入需要的參數。接著建立<code>Renderer</code>這<code>Code</code>為<code>ImageTargetsRenderer.java</code>寫到這邊我突然很想要把這些Code直接複製就好了，感覺應該是要可以通用才對。總之，建立完<code>GLView</code>需要加入<code>Renderer</code>而在<code>ImageTargetsRenderer.java</code>當中，在繪圖的<code>function</code>為<code>renderFrame()</code>這部分是<code>Native code</code>之後會再繼續補充。最後會把<code>GLView</code>加入到ContentView當中。<code>               addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</code>。</p>
 
-<figure class='code'><figcaption><span>ImageTargetsRenderer.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>ImageTargetsRenderer.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1556,7 +1556,7 @@
     <content type="html"><![CDATA[<p>最近找了一些關於Google map應用的Python程式，除了加強自己的Python技巧也多參考一下別人怎樣寫。之後要來研究一下<a href="http://www.pythonware.com/products/pil/">PIL:Python Image Library</a>，安裝其實很簡單，只要用<code>brew install pil</code>就搞定，該怎樣用？之後會再來慢慢研究，這邊只是提到有這東西，不過好像許久沒有更新，看他網頁介紹說新版快要出了，也不知道多快XD。這次Python練習主題應該是要熟悉一下Object-Oriented怎樣在Python上面使用。雖然參考的書是Python3不過應該沒差吧！其實還有像是怎樣建立或是打包package(模組)感覺也很重要。這次打算延續上次寫的GUI，然後加入怎樣寫OO的程式。
 主程式長成這樣，就弄個文字介面的就好。拿書本上的練習來打打字也沒有什麼特別，不過想要用其他寫好的模組，似乎只要import之後就可以用了。</p>
 
-<figure class='code'><figcaption><span>ConsoleMain.py lang=python </span></figcaption>
+<figure class='code'><figcaption><span>ConsoleMain.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1579,7 +1579,7 @@
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="sd">Created on 2013/2/3</span>
 </span><span class='line'>
 </span><span class='line'><span class="sd">@author: CYChiang</span>
@@ -1606,7 +1606,7 @@
 
 <p>在class程式當中有很多<strong>OO</strong>的東西，看了一下書，好像是屬於Object類別裡面預設的東西。我嘗試把<strong>str</strong>拿掉，出來的結果還是跟有加入<strong>str</strong>寫的東西一樣，所以我覺得這應該是內建的method來協助class之間的運算，除了這裡面寫的這些，google一下好像也有很多<strong>OO</strong>的方法在Object裡面。</p>
 
-<figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1626,7 +1626,7 @@
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="sd">Created on 2013/2/3</span>
 </span><span class='line'>
 </span><span class='line'><span class="sd">@author: CYChiang</span>
@@ -1650,7 +1650,7 @@
 
 <p>感覺好像也沒有什麼特別的，以上是class基本的實作，接下來弄個繼承。在繼承上練習的時候，書本程式碼竟然不會過…Google一下好像是什麼oldstyle的問題，暫時不太想理會，總之找到了另外一個繼承的方式。</p>
 
-<figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1670,7 +1670,7 @@
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Point</span><span class="p">):</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Point</span><span class="p">):</span>
 </span><span class='line'>    <span class="n">radius</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 </span><span class='line'>        <span class="c">#super().__init__(x, y)</span>
@@ -1694,7 +1694,7 @@
 
 <p>有問題的點就是在<code>super().__init__(x, y)</code>和<code>super(Circle, self).__init__(x, y)</code>依照說明在class建立的時候會去呼叫<strong>init</strong>的內容，算建構式吧！那在super那裡應該是繼承Point裡面的建構<code>x, y</code>這兩個值才對。但是怎樣用在<code>super().__init__(x, y)</code>和<code>super(Circle, self).__init__(x, y)</code>一定噴錯給你。最後發現要用<code>Point.__init__(self, x, y)</code>這應該是先呼叫Point的建構，總之，可行，以後再來慢慢想怎樣解決這問題。接下來的Code是加入數字檢查是不是為正和不為0，備忘一下。<code>assert “條件”, "不成立輸出"</code>。</p>
 
-<figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1758,7 +1758,7 @@
 <span class='line-number'>61</span>
 <span class='line-number'>62</span>
 <span class='line-number'>63</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="sd">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="sd">Created on 2013/2/3</span>
 </span><span class='line'>
 </span><span class='line'><span class="sd">@author: CYChiang</span>

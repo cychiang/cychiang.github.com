@@ -4,7 +4,7 @@
   <title><![CDATA[Category: PIL | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/pil/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-05T21:02:54+08:00</updated>
+  <updated>2013-02-05T21:09:51+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>最近找了一些關於Google map應用的Python程式，除了加強自己的Python技巧也多參考一下別人怎樣寫。之後要來研究一下<a href="http://www.pythonware.com/products/pil/">PIL:Python Image Library</a>，安裝其實很簡單，只要用<code>brew install pil</code>就搞定，該怎樣用？之後會再來慢慢研究，這邊只是提到有這東西，不過好像許久沒有更新，看他網頁介紹說新版快要出了，也不知道多快XD。這次Python練習主題應該是要熟悉一下Object-Oriented怎樣在Python上面使用。雖然參考的書是Python3不過應該沒差吧！其實還有像是怎樣建立或是打包package(模組)感覺也很重要。這次打算延續上次寫的GUI，然後加入怎樣寫OO的程式。
 主程式長成這樣，就弄個文字介面的就好。拿書本上的練習來打打字也沒有什麼特別，不過想要用其他寫好的模組，似乎只要import之後就可以用了。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>ConsoleMain.py lang=python </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>ConsoleMain.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -49,7 +49,7 @@
 <span class='line-number'>25</span>
 <span class='line-number'>26</span>
 <span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="s">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="s">Created on 2013/2/3&lt;/p&gt;</span>
@@ -80,7 +80,7 @@
 
 <p>在class程式當中有很多<strong>OO</strong>的東西，看了一下書，好像是屬於Object類別裡面預設的東西。我嘗試把<strong>str</strong>拿掉，出來的結果還是跟有加入<strong>str</strong>寫的東西一樣，所以我覺得這應該是內建的method來協助class之間的運算，除了這裡面寫的這些，google一下好像也有很多<strong>OO</strong>的方法在Object裡面。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -106,7 +106,7 @@
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
 <span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="s">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="s">Created on 2013/2/3&lt;/p&gt;</span>
@@ -135,7 +135,7 @@
 
 <p>感覺好像也沒有什麼特別的，以上是class基本的實作，接下來弄個繼承。在繼承上練習的時候，書本程式碼竟然不會過…Google一下好像是什麼oldstyle的問題，暫時不太想理會，總之找到了另外一個繼承的方式。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -161,7 +161,7 @@
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
 <span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Point</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
@@ -190,7 +190,7 @@
 
 <p>有問題的點就是在<code>super().__init__(x, y)</code>和<code>super(Circle, self).__init__(x, y)</code>依照說明在class建立的時候會去呼叫<strong>init</strong>的內容，算建構式吧！那在super那裡應該是繼承Point裡面的建構<code>x, y</code>這兩個值才對。但是怎樣用在<code>super().__init__(x, y)</code>和<code>super(Circle, self).__init__(x, y)</code>一定噴錯給你。最後發現要用<code>Point.__init__(self, x, y)</code>這應該是先呼叫Point的建構，總之，可行，以後再來慢慢想怎樣解決這問題。接下來的Code是加入數字檢查是不是為正和不為0，備忘一下。<code>assert “條件”, "不成立輸出"</code>。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py lang=python </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Shape.py  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -261,7 +261,7 @@
 <span class='line-number'>68</span>
 <span class='line-number'>69</span>
 <span class='line-number'>70</span>
-</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="s">&#39;&#39;&#39;</span>
 </span><span class='line'><span class="s">Created on 2013/2/3&lt;/p&gt;</span>

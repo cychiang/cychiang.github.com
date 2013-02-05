@@ -121,7 +121,7 @@
 
 <p>以上大概是每個範例程式所會進行的事情，那在這當中最基本的大概就是開啟<code>Camera</code>吧！在建立完專案之後，先加入一下使用Camera的權限到Android程式當中。</p>
 
-<figure class='code'><figcaption><span>AndroidManifest.xml lang=xml </span></figcaption>
+<figure class='code'><figcaption><span>AndroidManifest.xml  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -194,7 +194,7 @@
 <p>根據之前分析的範例程式的結果，裡面分為幾個步驟：<code>Init_QCAR</code>-><code>Init_Tracker</code>-><code>InitApp_AR</code>-><code>InitLoader_Tracker</code>詳細過程內容，看看之後有沒有興趣補上，以上名字不一定正確因為是自己寫的簡解XD，但是都在vuforia範例程式當中可以找到。那在<code>Init_QCAR</code>以及<code>Init_Tracker</code>當中，主要是讀取<code>QCAR</code>的<code>Library</code>也就是<code>vuforia</code>在<code>Init_Tracker</code>當中，為讀取資料庫，資料庫是什麼東西？可以參考<a href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/">Vuforia-I</a>的文章。
 在這範例程式當中，使用了<code>OpenGL ES</code>來當作繪圖的主要工具之一，其中也有一大段的<code>Code</code>在偵測平台支援<code>OpenGL ES 1.1 or OpenGL ES 2.0</code>在Camera讀取影像並且貼到<code>GLSurfaceView</code>這部分是必需要能釐清的部分，而這中間包含了一些<code>OpenGL ES</code>的寫法，說真的也不是很了解XD。總覺得需要寫很久…就分部分寫吧！先來了解一下<code>Sample Code</code>它所提寫的<code>QCARSampleGLView.java</code>，其實裡面有很多設定完全不知所以然，在這邊就慢慢解說和了解這<code>Code</code>所需要完成的事情。了解之後也比較好釐清一個<code>OpenGL ES</code>程式該怎樣寫。整段貼上，連同聲明！</p>
 
-<figure class='code'><figcaption><span>QCARSampleGLView.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>QCARSampleGLView.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -721,7 +721,7 @@
 
 <p>根據尋找的結果是，在<code>OpenGL</code>當中，在進行<code>Render</code>(渲染？)需要先進行<code>EGLContextFactory</code>和<code>EGLConfigChooser</code>，什麼是<code>Render</code>？可以參考一下<a href="http://zh.wikipedia.org/wiki/%E6%B8%B2%E6%9F%93">渲染-Wiki</a>，主要就是：幾何、視點、紋理以及照明訊息。老實說，完全不明白…看樣子需要去學個電腦圖學會更清楚才對。說真的<code>OpenGL</code>的程式，真的跟天書一樣…後來了解到，這只是設定<code>OpenGL ES</code>所可能需要用到的東西，大概是因為需要進行<code>3D</code>的貼圖吧！所以才需要這些幾何、視點等資料，為了讓<code>Render</code>的物件更逼真！？後來看到主程式的<code>Code</code>大概也說明了這件事情。</p>
 
-<figure class='code'><figcaption><span>ImageTargets.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>ImageTargets.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -797,7 +797,7 @@
 
 <p>還有另外一個<code>Code</code>專門處理<code>Render</code>，在這主要的<code>initApplicationAR</code>當中，先建立一個<code>GLView</code>然後是先前貼的<code>QCARSampleGLView.java</code>接著在<code>initialization</code>放入需要的參數。接著建立<code>Renderer</code>這<code>Code</code>為<code>ImageTargetsRenderer.java</code>寫到這邊我突然很想要把這些Code直接複製就好了，感覺應該是要可以通用才對。總之，建立完<code>GLView</code>需要加入<code>Renderer</code>而在<code>ImageTargetsRenderer.java</code>當中，在繪圖的<code>function</code>為<code>renderFrame()</code>這部分是<code>Native code</code>之後會再繼續補充。最後會把<code>GLView</code>加入到ContentView當中。<code>               addContentView(mGlView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</code>。</p>
 
-<figure class='code'><figcaption><span>ImageTargetsRenderer.java lang=java </span></figcaption>
+<figure class='code'><figcaption><span>ImageTargetsRenderer.java  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
