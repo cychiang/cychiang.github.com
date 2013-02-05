@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-04T17:41:58+08:00</updated>
+  <updated>2013-02-05T21:02:54+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -12,6 +12,671 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Vuforia-II: Camera(II)]]></title>
+    <link href="http://cychiang.github.com/blog/2013/02/05/vuforia-ii-camera-ii/"/>
+    <updated>2013-02-05T12:51:00+08:00</updated>
+    <id>http://cychiang.github.com/blog/2013/02/05/vuforia-ii-camera-ii</id>
+    <content type="html"><![CDATA[<p>經過比對vuforia的<code>Sample code</code>更加確定了幾件事情，就是很多基本的<code>Code</code>都是可以重複用的，例如：<code>Initial</code>的流程或是<code>jni</code>的設定等，大部份都是一樣的。除了特別用途需要用到特別的功能之外，基本上架構都是一樣。基於這個原因，我開始把可以重復用的部分抽離出來，建立一個<code>Template</code>，以後在用的時候就可以直接拿這個<code>Template</code>來新增、修改或是弄些比較有趣的<code>Demo</code>。我也將我所完成的<a href="https://github.com/cychiang/vuforiaDemo.git">Code</a>放到<a href="https://github.com/">github</a>上，也趁機熟悉一下git版本控制。老實說一個main_activity就要1xxx行，對我來講，真是有點看不下去。大致上知道流程，所以趁著還記憶猶新的時候，開始備忘一下。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="nd">@Override</span>
+</span><span class='line'>  <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGD</span><span class="o">(</span><span class="s">&quot;cameraDemo&quot;</span><span class="o">,</span> <span class="s">&quot;cameraDemo::onCreate&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span><span class='line'>      <span class="c1">// Load any sample specific textures:</span>
+</span><span class='line'>      <span class="c1">// mTextures = new Vector&lt;Texture&gt;();</span>
+</span><span class='line'>      <span class="c1">// loadTextures();</span>
+</span><span class='line'>      <span class="c1">// Query the QCAR initialization flags:</span>
+</span><span class='line'>      <span class="n">mQCARFlags</span> <span class="o">=</span> <span class="n">getInitializationFlags</span><span class="o">();</span>
+</span><span class='line'>      <span class="c1">// Creates the GestureDetector listener for processing double tap</span>
+</span><span class='line'>      <span class="c1">// mGestureDetector = new GestureDetector(this, new GestureListener());</span>
+</span><span class='line'>      <span class="c1">// Update the application status to start initializing application:</span>
+</span><span class='line'>      <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_INIT_APP</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>首先我們針對<code>onCreate</code>的程式進入點當中來進行說明。在這邊當中，其實有些部分可以先行拿掉，如果只是要開啟<code>Camera</code>的功能的話，首先前面的<code>DebugLog</code>和<code>super.onCreate</code>等說明應該不用了。在<code>loadTextures()</code>當中，就是(前一篇Vuforia-II Camera)[http://cychiang.github.com/blog/2013/02/04/vuforia-ii-camera/]所提到的對於電腦圖學我需要的一些東西，詳細可以參考一下Wiki的說明，簡單說就是貼皮膚上去！就像穿衣服。而在<code>getInitializationFlags();</code>當中，主要是偵測<code>Device</code>支援的<code>OpenGL ES</code>的版本，那這部分會再呼叫<code>Native code</code>來解決，這部分未來會針對<code>Native code</code>部分進行說明。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="cm">/** Configure QCAR with the desired version of OpenGL ES. */</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">int</span> <span class="nf">getInitializationFlags</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Query the native code:</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">getOpenGlEsVersionNative</span><span class="o">()</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">flags</span> <span class="o">=</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">GL_11</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>          <span class="n">flags</span> <span class="o">=</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">GL_20</span><span class="o">;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">return</span> <span class="n">flags</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後會去呼叫<code>updateApplicationStatus()</code>這部份是用來更新目前的程式狀態，<code>Demo</code>程式寫的挺詳細的，把每個狀態該進行哪些工作都說明的很清楚。接著我們來看<code>updateApplicationStatus()</code>的實作內容。有點長，但大部份都是註解，有時候真的不得不佩服一些公司的<code>Code</code>註解寫的相當清楚<code>Trace</code>沒煩惱。在程式這邊的狀態定義為：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>// Application status constants:
+</span><span class='line'>private static final int APPSTATUS_UNINITED = -1;
+</span><span class='line'>private static final int APPSTATUS_INIT_APP = 0;
+</span><span class='line'>private static final int APPSTATUS_INIT_QCAR = 1;
+</span><span class='line'>private static final int APPSTATUS_INIT_TRACKER = 2;
+</span><span class='line'>private static final int APPSTATUS_INIT_APP_AR = 3;
+</span><span class='line'>private static final int APPSTATUS_LOAD_TRACKER = 4;
+</span><span class='line'>private static final int APPSTATUS_INITED = 5;
+</span><span class='line'>private static final int APPSTATUS_CAMERA_STOPPED = 6;
+</span><span class='line'>private static final int APPSTATUS_CAMERA_RUNNING = 7;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>先釐清之後會比較了解之後程式的走向。在<code>onCreate()</code>當中，傳入的參數為<code>APPSTATUS_INIT_APP</code>，也就是<code>0</code>對應到接下來的<code>updateApplicationStatus(int appStatus)</code>當中會是在<code>case APPSTATUS_INIT_APP:</code>的區段裡面，而這裡面的執行內容是先執行<code>initApplication()</code>完成之後，執行<code>updateApplicationSatus(APPSTATUS_INIT_QCAR)</code>，也就是說，執行完成後會再重新進入這個<code>function</code>而帶入的參數是<code>APPSTATUS_INIT_QCAR</code>接下來，我們看一下<code>initApplication()</code>在進行哪些事情。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="cm">/** Initialize application GUI elements that are not related to AR. */</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">initApplication</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">// Set the screen orientation:</span>
+</span><span class='line'>      <span class="c1">// NOTE: Use SCREEN_ORIENTATION_LANDSCAPE or SCREEN_ORIENTATION_PORTRAIT</span>
+</span><span class='line'>      <span class="c1">// to lock the screen orientation for this activity.</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">screenOrientation</span> <span class="o">=</span> <span class="n">ActivityInfo</span><span class="o">.</span><span class="na">SCREEN_ORIENTATION_SENSOR</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// This is necessary for enabling AutoRotation in the Augmented View</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">screenOrientation</span> <span class="o">==</span> <span class="n">ActivityInfo</span><span class="o">.</span><span class="na">SCREEN_ORIENTATION_SENSOR</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// NOTE: We use reflection here to see if the current platform</span>
+</span><span class='line'>          <span class="c1">// supports the full sensor mode (available only on Gingerbread</span>
+</span><span class='line'>          <span class="c1">// and above.</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// SCREEN_ORIENTATION_FULL_SENSOR is required to allow all</span>
+</span><span class='line'>              <span class="c1">// 4 screen rotations if API level &gt;= 9:</span>
+</span><span class='line'>              <span class="n">Field</span> <span class="n">fullSensorField</span> <span class="o">=</span> <span class="n">ActivityInfo</span><span class="o">.</span><span class="na">class</span>
+</span><span class='line'>                      <span class="o">.</span><span class="na">getField</span><span class="o">(</span><span class="s">&quot;SCREEN_ORIENTATION_FULL_SENSOR&quot;</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">screenOrientation</span> <span class="o">=</span> <span class="n">fullSensorField</span><span class="o">.</span><span class="na">getInt</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NoSuchFieldException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// App is running on API level &lt; 9, do nothing.</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Apply screen orientation</span>
+</span><span class='line'>      <span class="n">setRequestedOrientation</span><span class="o">(</span><span class="n">screenOrientation</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">updateActivityOrientation</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Query display dimensions:</span>
+</span><span class='line'>      <span class="n">storeScreenDimensions</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// As long as this window is visible to the user, keep the device&#39;s</span>
+</span><span class='line'>      <span class="c1">// screen turned on and bright:</span>
+</span><span class='line'>      <span class="n">getWindow</span><span class="o">().</span><span class="na">setFlags</span><span class="o">(</span><span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">.</span><span class="na">FLAG_KEEP_SCREEN_ON</span><span class="o">,</span>
+</span><span class='line'>              <span class="n">WindowManager</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">.</span><span class="na">FLAG_KEEP_SCREEN_ON</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在這段<code>function</code>似乎沒有進行什麼特別的<code>init</code>，全不可以看到的就是偵測目前裝置的方向就是你是拿直的還是橫的情況，而也會有一個<code>function</code>來記錄目前<code>screen</code>的狀態，應該是可以不用特別去了解細節。可能是因為要<code>Render</code>東西需要考慮方向性問題吧！好了，既然知道這邊是確定螢幕的方向內容，那可以先繼續下一步，也就是<code>updateApplicationStatus(APPSTATUS_INIT_QCAR);</code>，這邊在<code>case APPSTATUS_INIT_QCAR</code>當中主要是建立一個<code>Task</code>而這個<code>Task</code>為<code>InitQCARTask()</code>，接下來就進入我們<code>InitQCARTask()</code>來進行說明。然而需要注意一點就是，這邊在實現上為另外建立一個<code>Task</code>所以這邊是先<code>mInitQCARTask = new InitQCARTask();</code>接著<code>mInitQCARTask.execute()</code>。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="cm">/** An async task to initialize QCAR asynchronously. */</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">class</span> <span class="nc">InitQCARTask</span> <span class="kd">extends</span> <span class="n">AsyncTask</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">,</span> <span class="n">Integer</span><span class="o">,</span> <span class="n">Boolean</span><span class="o">&gt;</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">// Initialize with invalid value:</span>
+</span><span class='line'>      <span class="kd">private</span> <span class="kt">int</span> <span class="n">mProgressValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">protected</span> <span class="n">Boolean</span> <span class="nf">doInBackground</span><span class="o">(</span><span class="n">Void</span><span class="o">...</span> <span class="n">params</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// Prevent the onDestroy() method to overlap with initialization:</span>
+</span><span class='line'>          <span class="kd">synchronized</span> <span class="o">(</span><span class="n">mShutdownLock</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">QCAR</span><span class="o">.</span><span class="na">setInitParameters</span><span class="o">(</span><span class="n">cameraDemo</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="n">mQCARFlags</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="k">do</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="c1">// QCAR.init() blocks until an initialization step is</span>
+</span><span class='line'>                  <span class="c1">// complete, then it proceeds to the next step and reports</span>
+</span><span class='line'>                  <span class="c1">// progress in percents (0 ... 100%).</span>
+</span><span class='line'>                  <span class="c1">// If QCAR.init() returns -1, it indicates an error.</span>
+</span><span class='line'>                  <span class="c1">// Initialization is done when progress has reached 100%.</span>
+</span><span class='line'>                  <span class="n">mProgressValue</span> <span class="o">=</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">init</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>                  <span class="c1">// Publish the progress value:</span>
+</span><span class='line'>                  <span class="n">publishProgress</span><span class="o">(</span><span class="n">mProgressValue</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>                  <span class="c1">// We check whether the task has been canceled in the</span>
+</span><span class='line'>                  <span class="c1">// meantime (by calling AsyncTask.cancel(true)).</span>
+</span><span class='line'>                  <span class="c1">// and bail out if it has, thus stopping this thread.</span>
+</span><span class='line'>                  <span class="c1">// This is necessary as the AsyncTask will run to completion</span>
+</span><span class='line'>                  <span class="c1">// regardless of the status of the component that</span>
+</span><span class='line'>                  <span class="c1">// started is.</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">while</span> <span class="o">(!</span><span class="n">isCancelled</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">mProgressValue</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+</span><span class='line'>                      <span class="o">&amp;&amp;</span> <span class="n">mProgressValue</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="k">return</span> <span class="o">(</span><span class="n">mProgressValue</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onProgressUpdate</span><span class="o">(</span><span class="n">Integer</span><span class="o">...</span> <span class="n">values</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// Do something with the progress value &quot;values[0]&quot;, e.g. update</span>
+</span><span class='line'>          <span class="c1">// splash screen, progress bar, etc.</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onPostExecute</span><span class="o">(</span><span class="n">Boolean</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>          <span class="c1">// Done initializing QCAR, proceed to next application</span>
+</span><span class='line'>          <span class="c1">// initialization status:</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGD</span><span class="o">(</span><span class="s">&quot;cameraDemo&quot;</span><span class="o">,</span>
+</span><span class='line'>                      <span class="s">&quot;InitQCARTask::onPostExecute: QCAR &quot;</span>
+</span><span class='line'>                              <span class="o">+</span> <span class="s">&quot;initialization successful&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_INIT_TRACKER</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// Create dialog box for display error:</span>
+</span><span class='line'>              <span class="n">AlertDialog</span> <span class="n">dialogError</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AlertDialog</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span>
+</span><span class='line'>                      <span class="n">cameraDemo</span><span class="o">.</span><span class="na">this</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="n">dialogError</span><span class="o">.</span><span class="na">setButton</span><span class="o">(</span><span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">,</span> <span class="s">&quot;Close&quot;</span><span class="o">,</span>
+</span><span class='line'>                      <span class="k">new</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>                          <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialog</span><span class="o">,</span>
+</span><span class='line'>                                  <span class="kt">int</span> <span class="n">which</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                              <span class="c1">// Exiting application:</span>
+</span><span class='line'>                              <span class="n">System</span><span class="o">.</span><span class="na">exit</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'>                          <span class="o">}</span>
+</span><span class='line'>                      <span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="n">String</span> <span class="n">logMessage</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="c1">// NOTE: Check if initialization failed because the device is</span>
+</span><span class='line'>              <span class="c1">// not supported. At this point the user should be informed</span>
+</span><span class='line'>              <span class="c1">// with a message.</span>
+</span><span class='line'>              <span class="k">if</span> <span class="o">(</span><span class="n">mProgressValue</span> <span class="o">==</span> <span class="n">QCAR</span><span class="o">.</span><span class="na">INIT_DEVICE_NOT_SUPPORTED</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">logMessage</span> <span class="o">=</span> <span class="s">&quot;Failed to initialize QCAR because this &quot;</span>
+</span><span class='line'>                          <span class="o">+</span> <span class="s">&quot;device is not supported.&quot;</span><span class="o">;</span>
+</span><span class='line'>              <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>                  <span class="n">logMessage</span> <span class="o">=</span> <span class="s">&quot;Failed to initialize QCAR.&quot;</span><span class="o">;</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="c1">// Log error:</span>
+</span><span class='line'>              <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGE</span><span class="o">(</span><span class="s">&quot;cameraDemo&quot;</span><span class="o">,</span> <span class="s">&quot;InitQCARTask::onPostExecute: &quot;</span>
+</span><span class='line'>                      <span class="o">+</span> <span class="n">logMessage</span> <span class="o">+</span> <span class="s">&quot; Exiting.&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="c1">// Show dialog box with error message:</span>
+</span><span class='line'>              <span class="n">dialogError</span><span class="o">.</span><span class="na">setMessage</span><span class="o">(</span><span class="n">logMessage</span><span class="o">);</span>
+</span><span class='line'>              <span class="n">dialogError</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在這段<code>InitQCARTask()</code>主要的<code>protected Boolean doInBackground(Void... params)</code>裡面，就兩件事情比較重要<code>QCAR.setInitParameters(cameraDemo.this, mQCARFlags);</code>和<code>QCAR.init()</code>但是！<code>QCAR.setInitParameters()</code>有點奇怪，因為在<a href="https://developer.vuforia.com/resources/api/namespace_q_c_a_r#a2e798f9af51c11ee0e13e2f9e32449a7">官方API當中</a>裡面參數只有一個，這是官方API寫的<code>int QCAR_API QCAR::setInitParameters ( int flags )</code>所以讓我覺得有點奇怪，為什麼會多一個<code>Activity</code>的參數，不過既然都需要，就塞進去吧。最後還需要一個<code>QCAR.init()</code>在這邊官方API說明為<code>Initializes QCAR.</code>詳細怎樣<code>Initializes</code>也沒有說明很清楚。不過有一個<code>iOS</code>的說明，整段說明為：<code>iOS: Called to initialize QCAR. Initialization is progressive, so this function should be called repeatedly until it returns 100 or a negative value. Returns an integer representing the percentage complete (negative on error).</code>，所以，看來就是這一個<code>doInBackground(Void… params)</code>會一直執行直到<code>mProgressValue</code>為100!整個就是讀取條，很酷。那基本上這邊就是只有進行<code>Initialization QCAR</code>的功用，最後完成時會進入到<code>onPostExecute()</code>，然後呼叫<code>updateApplicationStatus(APPSTATUS_INIT_TRACKER);</code>這邊又是另外一段<code>function</code>的開始，我在想，不要搞<code>Task</code>直接用應該也是可以，只是可能比較不保險！？接下來我們看一下<code>case APPSTATUS_INIT_TRACKER:</code>主要有一個<code>function</code>就是<code>initTracker()</code>這個是<code>native code</code>不得已只好先跳到<code>native code</code>來<code>trace</code>。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.cpp lang=c++ </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">JNIEXPORT</span> <span class="kt">int</span> <span class="n">JNICALL</span>
+</span><span class='line'><span class="n">Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">LOG</span><span class="p">(</span><span class="s">&quot;Java_com_qualcomm_QCARSamples_ImageTargets_ImageTargets_initTracker&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Initialize the image tracker:</span>
+</span><span class='line'>    <span class="n">QCAR</span><span class="o">::</span><span class="n">TrackerManager</span><span class="o">&amp;</span> <span class="n">trackerManager</span> <span class="o">=</span> <span class="n">QCAR</span><span class="o">::</span><span class="n">TrackerManager</span><span class="o">::</span><span class="n">getInstance</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">QCAR</span><span class="o">::</span><span class="n">Tracker</span><span class="o">*</span> <span class="n">tracker</span> <span class="o">=</span> <span class="n">trackerManager</span><span class="p">.</span><span class="n">initTracker</span><span class="p">(</span><span class="n">QCAR</span><span class="o">::</span><span class="n">Tracker</span><span class="o">::</span><span class="n">IMAGE_TRACKER</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">tracker</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">LOG</span><span class="p">(</span><span class="s">&quot;Failed to initialize ImageTracker.&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">LOG</span><span class="p">(</span><span class="s">&quot;Successfully initialized ImageTracker.&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<code>native code</code>當中，主要有兩個用來<code>Initialize</code>的<code>function</code>，<code>QCAR::TrackerManager</code>和<code>QCAR::Tracker* tracker</code>在這邊參考一下<a href="https://developer.vuforia.com/resources/api/class_q_c_a_r_1_1_tracker_manager#details">官方的API</a><a href="https://developer.vuforia.com/resources/api/class_q_c_a_r_1_1_tracker">以及</a>，雖然官方API有些說明很兩光或是不清楚，但是大致上還是可以理解。首先在<code>QCAR::TrackerManager</code>當中，主要就是需要取得一個<code>TrackerManager</code>的<code>Instance()</code>接著針對這個<code>Instance</code>進行操作。接著設定<code>Tracker</code>用來追蹤所偵測到的目標而在所追蹤的目標也需要初始化它的類型，這就是<code>trackerManager.initTracker()</code>所做的事情。在這邊當中只有兩種<code>IMAGE_TRACKER-Tracks ImageTargets and MultiTargets.</code>以及<code>MARKER_TRACKER-Tracks Markers.</code>這兩種，那關於<code>Image Targets</code>、<code>MultiTargets</code>以及<code>Tracks Markers</code>在<a href="http://cychiang.github.com/blog/2013/01/31/research-on-vuforia-i/">Vuforia-I</a>有說明。OK，這邊想要補充一下什麼是<code>Instance</code>這是軟工的一個名詞，定義說明如下。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Instance：An instanceis an object created from a class. The class describes the (behavior and information)structure of the instance, while the current state of the instance is defined by the operations performed on the instance.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>節錄資料來源：<a href="http://teddy-chen-tw.blogspot.tw/2012/01/2object-class-instance.html">搞笑軟工</a></p>
+
+<p>在完成這些動作之後，接著進入<code>updateApplicationStatus(APPSTATUS_INIT_APP_AR);</code>今天寫到這邊，改天繼續說明和<code>Trace</code>。</p>
+
+<figure class='code'><figcaption><span>cameraDemo.java lang=java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'> <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  * NOTE: this method is synchronized because of a potential concurrent</span>
+</span><span class='line'><span class="cm">  * access by ImageTargets::onResume() and InitQCARTask::onPostExecute().</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">updateApplicationStatus</span><span class="o">(</span><span class="kt">int</span> <span class="n">appStatus</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="c1">// Exit if there is no change in status:</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span><span class="n">mAppStatus</span> <span class="o">==</span> <span class="n">appStatus</span><span class="o">)</span>
+</span><span class='line'>          <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Store new status value:</span>
+</span><span class='line'>      <span class="n">mAppStatus</span> <span class="o">=</span> <span class="n">appStatus</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Execute application state-specific actions:</span>
+</span><span class='line'>      <span class="k">switch</span> <span class="o">(</span><span class="n">mAppStatus</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_INIT_APP:</span>
+</span><span class='line'>          <span class="c1">// Initialize application elements that do not rely on QCAR</span>
+</span><span class='line'>          <span class="c1">// initialization:</span>
+</span><span class='line'>          <span class="n">initApplication</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Proceed to next application initialization status:</span>
+</span><span class='line'>          <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_INIT_QCAR</span><span class="o">);</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_INIT_QCAR:</span>
+</span><span class='line'>          <span class="c1">// Initialize QCAR SDK asynchronously to avoid blocking the</span>
+</span><span class='line'>          <span class="c1">// main (UI) thread.</span>
+</span><span class='line'>          <span class="c1">//</span>
+</span><span class='line'>          <span class="c1">// NOTE: This task instance must be created and invoked on the</span>
+</span><span class='line'>          <span class="c1">// UI thread and it can be executed only once!</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">mInitQCARTask</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InitQCARTask</span><span class="o">();</span>
+</span><span class='line'>              <span class="n">mInitQCARTask</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGE</span><span class="o">(</span><span class="s">&quot;cameraDemo&quot;</span><span class="o">,</span> <span class="s">&quot;Initializing QCAR SDK failed&quot;</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_INIT_TRACKER:</span>
+</span><span class='line'>          <span class="c1">// Initialize the ImageTracker:</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">initTracker</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="c1">// Proceed to next application initialization status:</span>
+</span><span class='line'>              <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_INIT_APP_AR</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_INIT_APP_AR:</span>
+</span><span class='line'>          <span class="c1">// Initialize Augmented Reality-specific application elements</span>
+</span><span class='line'>          <span class="c1">// that may rely on the fact that the QCAR SDK has been</span>
+</span><span class='line'>          <span class="c1">// already initialized:</span>
+</span><span class='line'>          <span class="n">initApplicationAR</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Proceed to next application initialization status:</span>
+</span><span class='line'>          <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_LOAD_TRACKER</span><span class="o">);</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_LOAD_TRACKER:</span>
+</span><span class='line'>          <span class="c1">// Load the tracking data set:</span>
+</span><span class='line'>          <span class="c1">//</span>
+</span><span class='line'>          <span class="c1">// NOTE: This task instance must be created and invoked on the</span>
+</span><span class='line'>          <span class="c1">// UI thread and it can be executed only once!</span>
+</span><span class='line'>          <span class="k">try</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">mLoadTrackerTask</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LoadTrackerTask</span><span class="o">();</span>
+</span><span class='line'>              <span class="n">mLoadTrackerTask</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">DebugLog</span><span class="o">.</span><span class="na">LOGE</span><span class="o">(</span><span class="s">&quot;cameraDemo&quot;</span><span class="o">,</span> <span class="s">&quot;Loading tracking data set failed&quot;</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_INITED:</span>
+</span><span class='line'>          <span class="c1">// Hint to the virtual machine that it would be a good time to</span>
+</span><span class='line'>          <span class="c1">// run the garbage collector:</span>
+</span><span class='line'>          <span class="c1">//</span>
+</span><span class='line'>          <span class="c1">// NOTE: This is only a hint. There is no guarantee that the</span>
+</span><span class='line'>          <span class="c1">// garbage collector will actually be run.</span>
+</span><span class='line'>          <span class="n">System</span><span class="o">.</span><span class="na">gc</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Native post initialization:</span>
+</span><span class='line'>          <span class="n">onQCARInitializedNative</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Activate the renderer:</span>
+</span><span class='line'>          <span class="n">mRenderer</span><span class="o">.</span><span class="na">mIsActive</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Now add the GL surface view. It is important</span>
+</span><span class='line'>          <span class="c1">// that the OpenGL ES surface view gets added</span>
+</span><span class='line'>          <span class="c1">// BEFORE the camera is started and video</span>
+</span><span class='line'>          <span class="c1">// background is configured.</span>
+</span><span class='line'>          <span class="n">addContentView</span><span class="o">(</span><span class="n">mGlView</span><span class="o">,</span> <span class="k">new</span> <span class="n">LayoutParams</span><span class="o">(</span><span class="n">LayoutParams</span><span class="o">.</span><span class="na">MATCH_PARENT</span><span class="o">,</span>
+</span><span class='line'>                  <span class="n">LayoutParams</span><span class="o">.</span><span class="na">MATCH_PARENT</span><span class="o">));</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Sets the UILayout to be drawn in front of the camera</span>
+</span><span class='line'>          <span class="c1">// mUILayout.bringToFront();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Start the camera:</span>
+</span><span class='line'>          <span class="n">updateApplicationStatus</span><span class="o">(</span><span class="n">APPSTATUS_CAMERA_RUNNING</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_CAMERA_STOPPED:</span>
+</span><span class='line'>          <span class="c1">// Call the native function to stop the camera:</span>
+</span><span class='line'>          <span class="n">stopCamera</span><span class="o">();</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">case</span> <span class="nl">APPSTATUS_CAMERA_RUNNING:</span>
+</span><span class='line'>          <span class="c1">// Call the native function to start the camera:</span>
+</span><span class='line'>          <span class="n">startCamera</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Hides the Loading Dialog</span>
+</span><span class='line'>          <span class="c1">// loadingDialogHandler.sendEmptyMessage(HIDE_LOADING_DIALOG);</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Sets the layout background to transparent</span>
+</span><span class='line'>          <span class="c1">// mUILayout.setBackgroundColor(Color.TRANSPARENT);</span>
+</span><span class='line'>
+</span><span class='line'>          <span class="c1">// Set continuous auto-focus if supported by the device,</span>
+</span><span class='line'>          <span class="c1">// otherwise default back to regular auto-focus mode.</span>
+</span><span class='line'>          <span class="c1">// This will be activated by a tap to the screen in this</span>
+</span><span class='line'>          <span class="c1">// application.</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(!</span><span class="n">setFocusMode</span><span class="o">(</span><span class="n">FOCUS_MODE_CONTINUOUS_AUTO</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">mContAutofocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+</span><span class='line'>              <span class="n">setFocusMode</span><span class="o">(</span><span class="n">FOCUS_MODE_NORMAL</span><span class="o">);</span>
+</span><span class='line'>          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class='line'>              <span class="n">mContAutofocus</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>          <span class="o">}</span>
+</span><span class='line'>          <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>          <span class="k">throw</span> <span class="k">new</span> <span class="nf">RuntimeException</span><span class="o">(</span><span class="s">&quot;Invalid application state&quot;</span><span class="o">);</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vuforia-II: Camera]]></title>
@@ -878,6 +1543,8 @@
 </span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>最後我決定，我把這些現有的<code>Code</code>都先複製好了。感覺應該是可以重複使用才對，剩下的就是<code>jni</code>的部分了！讓問題變簡單一點。等之後對<code>OpenGL</code>有更新的認識時，就可以回來補充了！</p>
 ]]></content>
   </entry>
   
