@@ -4,7 +4,7 @@
   <title><![CDATA[The memo blog.]]></title>
   <link href="http://cychiang.github.com/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-07T11:56:51+08:00</updated>
+  <updated>2013-02-07T15:23:49+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Google App Engine: Memo(I)]]></title>
+    <link href="http://cychiang.github.com/blog/2013/02/07/google-app-engine-memo-i/"/>
+    <updated>2013-02-07T14:23:00+08:00</updated>
+    <id>http://cychiang.github.com/blog/2013/02/07/google-app-engine-memo-i</id>
+    <content type="html"><![CDATA[<p>講了很久的<a href="https://developers.google.com/appengine/">Google App Engine(GAE)</a>，隨著今年的目標，一定要給他學會它，並且可以順利地寫出我要的功能！其實整個來講並沒有什麼太大的問題，唯一有一個要注意的就是。</p>
+
+<h1>最好每個檔案名稱千萬不要有大寫的存在！</h1>
+
+<p>只要記住這個，我想應該都沒有什麼問題。
+其實在設定<code>GAE</code>的開發環境其實沒有什麼特別問題，我想這邊設定之類的就先跳過。那其實在安裝<code>PyDev</code>的時候，就已經有預設有<code>GAE</code>的開發選項，所以應該也不是什麼太大問題。<a href="https://github.com/cychiang/pyGMapEngine">Sample code</a>也放在<a href="https://github.com/">github</a>上，基本上就是<code>GAE</code>的範例程式。那這邊先把過程了解的部份紀錄一下。首先有兩個<code>Code</code>一個<code>pygmapengine.py</code>另外一個<code>app.yaml</code>內容分別為：</p>
+
+<figure class='code'><figcaption><span>pygmapengine.py  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">webapp2</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">MainPage</span><span class="p">(</span><span class="n">webapp2</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;text/plain&#39;</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;pyGMapMain-Hello&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">app</span> <span class="o">=</span> <span class="n">webapp2</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">MainPage</span><span class="p">)],</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<code>pygmapengine.py</code>裡面，主要用的是<a href="http://webapp-improved.appspot.com/">webapp2</a>的套件，細節怎樣使用我覺得以後再來慢慢研究好了，這部分先求會動就好。看起來就很像是建立一個<code>MainPage</code>然後裡面寫一個<code>pyGmapMain-Hello</code>的字串，應該就只有這樣而已。在<code>app.yaml</code>這部分似乎是比較重要的，因為在GAE讀取建立的時候，這是一個<code>config</code>檔。在這個<a href="https://developers.google.com/appengine/docs/python/config/appconfig">app.yaml</a>也有參考可以看。首先<code>application:</code>說明為<code>The application identifier. This is the identifier you selected when you created the application in the Administration Console.</code>，那可以知道的事情就是，就一定要跟你在<code>GAE</code>的管理界面是一致的，這樣在上傳的時候才對的起來。那我在<code>GAE</code>建立的也是<code>pygmapengine</code>所以沒問題，之後程式可以在<a href="http://pygmapengine.appspot.com/">這裡</a>看到。<code>version:</code>似乎是版本？在更動的時候應該也會同時變動管理界面的版本才對，看說明也是如此。<code>runtime:</code>就所用的<code>Python Interprer</code>的版本，那在<code>GAE</code>上目前支援到<code>2.7</code>。<code>api_version:</code>這部分好像是說，用的<code>GAE</code>的<code>API</code>版本，在說明上目前好像都是<code>1</code>之後如果想要升級只要改改這個部份就好了。<code>threadsafe:</code>，看起來好像是什麼執行緒安全？說明是這樣<code>Configures your application to use concurrent requests.</code>應該是能不能支援<code>cncurrent requests</code>。最後終於<code>handlers:</code>這部份感覺有點複雜，因為要設定的東西似乎是網頁的路徑之類的，這部分留到未來慢慢研究好了。主要的說明在這邊<a href="https://developers.google.com/appengine/docs/python/config/appconfig#Script_Handlers">Script_Handlers</a>，似乎好像也沒有很多中文網站來討論這些設定問題。</p>
+
+<figure class='code'><figcaption><span>pygmapengine.py  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">application</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pygmapengine</span>
+</span><span class='line'><span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+</span><span class='line'><span class="l-Scalar-Plain">runtime</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">python27</span>
+</span><span class='line'><span class="l-Scalar-Plain">api_version</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+</span><span class='line'><span class="l-Scalar-Plain">threadsafe</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">handlers</span><span class="p-Indicator">:</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/.*</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">script</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pygmapengine.app</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後我想會直接開始寫個<code>JSON</code>範例用來存取吧！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vuforia-II: Camera(III)]]></title>
