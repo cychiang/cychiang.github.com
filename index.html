@@ -9,7 +9,7 @@
   <meta name="author" content="Casper Chiang">
 
   
-  <meta name="description" content="講了很久的Google App Engine(GAE)，隨著今年的目標，一定要給他學會它，並且可以順利地寫出我要的功能！其實整個來講並沒有什麼太大的問題，唯一有一個要注意的就是。 最好每個檔案名稱千萬不要有大寫的存在！ 只要記住這個，我想應該都沒有什麼問題。 &hellip;">
+  <meta name="description" content="荒廢了過年這段時間，這次要來研究一下別人寫的Python程式，主要用來取得Google Map的影像，並且可以把它存起來。因為某些原因，所以需要對Google Map進行存取地圖，除了存取地圖，也需要來計算每個地圖的大小，詳細的參考網站可以參考Tiles à la Google Maps: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,97 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/09/python-memo-i/">Python: Memo(I)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-09T19:35:00+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/09/python-memo-i/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>荒廢了過年這段時間，這次要來研究一下別人寫的<code>Python</code>程式，主要用來取得Google Map的影像，並且可以把它存起來。因為某些原因，所以需要對<code>Google Map</code>進行存取地圖，除了存取地圖，也需要來計算每個地圖的大小，詳細的參考網站可以參考<a href="http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/">Tiles à la Google Maps: Coordinates, Tile Bounds and Projection</a>關於<a href="http://www.cnblogs.com/LionGG/archive/2009/04/20/1439905.html">Google Map投影說明</a>可以參考這邊。而在我想要進行的應用當中，主要有幾個部份，<code>Google Map</code>在設定大小的時候，所出現的圖片其大小都是固定的，所以在這邊想要把每個圖片都弄幾個狀態，然而<code>Zoom in</code>的<code>level</code>設定在<code>21</code>左右，主要的應用，想要利用在某些用途上，總之，需要的功能為：</p>
+
+<ul>
+<li>取得使用者的<code>GPS</code>資訊</li>
+<li>使用者<code>GPS</code>資訊對應到<code>Google Map</code>的編號</li>
+<li><code>Google Map</code>每個區塊邊界取得</li>
+</ul>
+
+
+<p>剩下的有些就是需要資料庫的幫忙了，接著最後目標就是要放到<code>GAE</code>上面，然後提供給<code>Android</code>來服務。那在這邊有兩個網路上找的<code>Sample code</code>，就來慢慢<code>Trace</code>。</p>
+
+<figure class='code'><figcaption><span>pyMapGrab.py  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">final</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dx</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">dy</span><span class="p">)))</span>
+</span><span class='line'><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">dxn</span> <span class="o">=</span> <span class="n">largura</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">dyn</span> <span class="o">=</span> <span class="n">altura</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">latn</span><span class="p">,</span> <span class="n">lonn</span> <span class="o">=</span> <span class="n">pixelstolatlon</span><span class="p">(</span><span class="n">ulx</span> <span class="o">+</span> <span class="n">dxn</span><span class="p">,</span> <span class="n">uly</span> <span class="o">-</span> <span class="n">dyn</span> <span class="o">-</span> <span class="n">bottom</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">position</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">latn</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">lonn</span><span class="p">)))</span>
+</span><span class='line'>        <span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">position</span>
+</span><span class='line'>        <span class="n">urlparams</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s">&#39;center&#39;</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+</span><span class='line'>                                      <span class="s">&#39;zoom&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">zoom</span><span class="p">),</span>
+</span><span class='line'>                                      <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">x</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">largura</span><span class="p">,</span> <span class="n">alturaplus</span><span class="p">),</span>
+</span><span class='line'>                                      <span class="s">&#39;maptype&#39;</span><span class="p">:</span> <span class="s">&#39;satellite&#39;</span><span class="p">,</span>
+</span><span class='line'>                                      <span class="s">&#39;sensor&#39;</span><span class="p">:</span> <span class="s">&#39;false&#39;</span><span class="p">,</span>
+</span><span class='line'>                                      <span class="s">&#39;scale&#39;</span><span class="p">:</span> <span class="n">scale</span><span class="p">})</span>
+</span><span class='line'>        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://maps.google.com/maps/api/staticmap?&#39;</span> <span class="o">+</span> <span class="n">urlparams</span>
+</span><span class='line'>        <span class="n">f</span><span class="o">=</span><span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+</span><span class='line'>        <span class="n">final</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">largura</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="n">altura</span><span class="p">)))</span>
+</span><span class='line'><span class="n">final</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>這算是主要的<code>main loop</code>，首先就是要建立一張超大的空白圖，這就是使用<code>PIL（Python Image Library）</code>，在安裝上還算方便。只是也同樣需要設定一下就是了，不然會找不到<code>Image.new()</code>。這一整段的程式，拆開來執行就是每次截取一小段圖片，後一直拼拼拼成一張大張的圖，這些圖當然都是<code>Google Map</code>提供的。在傳送網址的詳細參數，可以參考<a href="https://developers.google.com/maps/documentation/staticmaps/?hl=zh-tw">Google Map Static API</a>，似乎有很多參數可以選擇…時間上的關係，需要來加緊趕工<code>vuforia</code>的程式了。之後再來慢慢補完這些要研究的東西。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3765,96 +3856,9 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/01/31/research-on-vuforia-i/">Research on vuforia-I</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-01-31T10:47:00+08:00" pubdate data-updated="true">Jan 31<span>st</span>, 2013</time>
-        
-         | <a href="/blog/2013/01/31/research-on-vuforia-i/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近在研究一些AR相關的Library，有Opensource也有沒Opensource，在這當中，如果想要儘快有成果，不想要管他的實現技術為如何，那vuforia是一個很好的選擇，除了速度快之外，也提供了很厲害的方式來建立標籤，標簽包括：</p>
-
-<ul>
-<li>Image Target: 其實就是一張影像，不用帶任何特殊記號，帶特殊記號的例子就像QR-Code一樣。</li>
-<li>Multi Target: 不是多重目標，指的是3D Object，例如盒子之類的標籤。</li>
-<li>Frame Marker: 指的是帶特殊記號的影像。</li>
-</ul>
-
-
-<p>詳細的說明可以在<a href="https://developer.vuforia.com/">vuforia developer portal</a>找到很多資源。</p>
-
-<p>而想要用vuforia的資源，一定得要註冊成為vuforia developer，在1.0的時代，曾經註冊過，但是個人覺得很難用，到了2.0時代，好像是2012年底的時候release，變的特別好用。所以特別推薦。</p>
-
-<p>尤其他們提供的Cloud recognition很有趣，跟以前所想要弄的研究很相似，既然他們完成了，就努力用吧！</p>
-
-<p>特別說一下Cloud recognition，他是掃瞄完可能需要Render虛擬物件的Target然後透過網路去比對確認。</p>
-
-<p>所以可以不用把Target的資訊存在手機端。但是還是需要把要Render的東西放在手機當中。</p>
-
-<p>接下來就是先來跑一下建立的步驟。</p>
-
-<p>這個是註冊完成之後，點入Target Manager的畫面，如果是空的就會有一些教學。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Target_Manager.png weight=320 height=240 /></p>
-
-<p>在這邊有兩種Database：</p>
-
-<ul>
-<li>Device Database</li>
-<li>Cloud Database</li>
-</ul>
-
-
-<p>就如前面所講的，主要是是不是要把標籤資料放在手機端或是放在「雲端」，在這邊我是先建立Device Database，點進去之後就會看到Create Database的選項。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_CreateDB.png weight=320 height=120 /></p>
-
-<p>接著建立之後，輸入這個Database的名稱，當然是隨便Key囉。完成之後就會看到頁面出現一個空的Database。另外為什麼不用Cloud Database?因為在測試的時候，不知道為什麼一直都無法正常的使用自己的Cloud Database等哪天可以使用的時候再來備忘一下。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_AfterCreateDB.png weight=320 height=240 /></p>
-
-<p>在加入Image Target的時候，會需要輸入一些資訊，只要照的填寫就好了，但是唯一有一個比較有問題的是Weight的選項，還是Height的選項，這部分我是直接填入我們影像的Weight的pixel值。</p>
-
-<p>最後這是完成塞入一堆圖的結果。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Finish.png weight=320 height=240 /></p>
-
-<p>接著如果要在手機端使用這些Database只要進去所建立的Database當中，把想要的Target打勾之後，會有一個Download Selected Targets的按鈕，按下去就會出現。</p>
-
-<p><img src=https://dl.dropbox.com/u/15251095/vuforia/Vuforia_FunnyDB_Download.png weight=320 height=240 /></p>
-
-<p>下載回來之後只要修改設定一下載入的Dataset就可以使用了。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -3865,6 +3869,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/02/09/python-memo-i/">Python: Memo(I)</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/02/07/google-app-engine-memo-i/">Google App Engine: Memo(I)</a>
@@ -3880,10 +3888,6 @@
     
       <li class="post">
         <a href="/blog/2013/02/04/vuforia-ii-camera/">Vuforia-II: Camera</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/03/python-gui-programming-ii/">Python: GUI Programming-II</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | The memo blog.]]></title>
   <link href="http://cychiang.github.com/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://cychiang.github.com/"/>
-  <updated>2013-02-07T15:23:49+08:00</updated>
+  <updated>2013-02-18T11:28:19+08:00</updated>
   <id>http://cychiang.github.com/</id>
   <author>
     <name><![CDATA[Casper Chiang]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python: Memo(I)]]></title>
+    <link href="http://cychiang.github.com/blog/2013/02/09/python-memo-i/"/>
+    <updated>2013-02-09T19:35:00+08:00</updated>
+    <id>http://cychiang.github.com/blog/2013/02/09/python-memo-i</id>
+    <content type="html"><![CDATA[<p>荒廢了過年這段時間，這次要來研究一下別人寫的<code>Python</code>程式，主要用來取得Google Map的影像，並且可以把它存起來。因為某些原因，所以需要對<code>Google Map</code>進行存取地圖，除了存取地圖，也需要來計算每個地圖的大小，詳細的參考網站可以參考<a href="http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/">Tiles à la Google Maps: Coordinates, Tile Bounds and Projection</a>關於<a href="http://www.cnblogs.com/LionGG/archive/2009/04/20/1439905.html">Google Map投影說明</a>可以參考這邊。而在我想要進行的應用當中，主要有幾個部份，<code>Google Map</code>在設定大小的時候，所出現的圖片其大小都是固定的，所以在這邊想要把每個圖片都弄幾個狀態，然而<code>Zoom in</code>的<code>level</code>設定在<code>21</code>左右，主要的應用，想要利用在某些用途上，總之，需要的功能為：</p>
+
+<ul>
+<li>取得使用者的<code>GPS</code>資訊</li>
+<li>使用者<code>GPS</code>資訊對應到<code>Google Map</code>的編號</li>
+<li><code>Google Map</code>每個區塊邊界取得</li>
+</ul>
+
+
+<p>剩下的有些就是需要資料庫的幫忙了，接著最後目標就是要放到<code>GAE</code>上面，然後提供給<code>Android</code>來服務。那在這邊有兩個網路上找的<code>Sample code</code>，就來慢慢<code>Trace</code>。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>pyMapGrab.py  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">final</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dx</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">dy</span><span class="p">)))</span>
+</span><span class='line'><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">dxn</span> <span class="o">=</span> <span class="n">largura</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">dyn</span> <span class="o">=</span> <span class="n">altura</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">latn</span><span class="p">,</span> <span class="n">lonn</span> <span class="o">=</span> <span class="n">pixelstolatlon</span><span class="p">(</span><span class="n">ulx</span> <span class="o">+</span> <span class="n">dxn</span><span class="p">,</span> <span class="n">uly</span> <span class="o">-</span> <span class="n">dyn</span> <span class="o">-</span> <span class="n">bottom</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">position</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">latn</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">lonn</span><span class="p">)))</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">position</span>
+</span><span class='line'>    <span class="n">urlparams</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s">&#39;center&#39;</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="s">&#39;zoom&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">zoom</span><span class="p">),</span>
+</span><span class='line'>                                  <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">x</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">largura</span><span class="p">,</span> <span class="n">alturaplus</span><span class="p">),</span>
+</span><span class='line'>                                  <span class="s">&#39;maptype&#39;</span><span class="p">:</span> <span class="s">&#39;satellite&#39;</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="s">&#39;sensor&#39;</span><span class="p">:</span> <span class="s">&#39;false&#39;</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="s">&#39;scale&#39;</span><span class="p">:</span> <span class="n">scale</span><span class="p">})</span>
+</span><span class='line'>    <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://maps.google.com/maps/api/staticmap?&#39;</span> <span class="o">+</span> <span class="n">urlparams</span>
+</span><span class='line'>    <span class="n">f</span><span class="o">=</span><span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+</span><span class='line'>    <span class="n">final</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">largura</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="n">altura</span><span class="p">)))</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">final</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>這算是主要的<code>main loop</code>，首先就是要建立一張超大的空白圖，這就是使用<code>PIL（Python Image Library）</code>，在安裝上還算方便。只是也同樣需要設定一下就是了，不然會找不到<code>Image.new()</code>。這一整段的程式，拆開來執行就是每次截取一小段圖片，後一直拼拼拼成一張大張的圖，這些圖當然都是<code>Google Map</code>提供的。在傳送網址的詳細參數，可以參考<a href="https://developers.google.com/maps/documentation/staticmaps/?hl=zh-tw">Google Map Static API</a>，似乎有很多參數可以選擇…時間上的關係，需要來加緊趕工<code>vuforia</code>的程式了。之後再來慢慢補完這些要研究的東西。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Google App Engine: Memo(I)]]></title>
