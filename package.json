@@ -37,7 +37,7 @@
     "@slidev/parser": "^53.0.0",
     "astro": "^7.3.0",
     "mermaid": "^12.1.0",
-    "satori": "^0.44.1",
+    "satori": "^0.47.1",
     "slidev-addon-site": "workspace:*",
     "slidev-theme-terminal": "workspace:*",
     "vue": "^3.5.43",
