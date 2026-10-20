@@ -16,6 +16,9 @@ export const site = {
   author: { name: 'Chuan-Yen Chiang', url: 'https://github.com/cychiang' },
   /** The shell prompt shown before each section: user@host:~$ */
   prompt,
+  /** Pages of this site linked from the header, relative to the base path. */
+  pages: [{ label: 'About', path: 'about/' }],
+  /** Profiles elsewhere, linked from the header after the pages. */
   links: [
     { label: 'GitHub', href: 'https://github.com/cychiang' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chuan-yen' },

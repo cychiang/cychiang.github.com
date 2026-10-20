@@ -14,6 +14,8 @@ that are built separately and published together:
 - **Posts**: Markdown notes in `posts/<slug>.md`, published at
   `/posts/<slug>/`, usually written in OpenKnowledge (see "Writing with
   OpenKnowledge").
+- **About**: one Markdown file per tab in `about/`, published together at
+  `/about/` (see "The about page").
 - **Homepage**: an [Astro](https://astro.build) site in `src/` that shows every
   published deck as a card on a wall and lists every published post. Cards
   and rows are generated from each file's frontmatter. Nothing is written
@@ -25,6 +27,7 @@ that are built separately and published together:
 decks/<slug>/slides.md     one Slidev deck per folder (the content)
 decks/<slug>/cover.png     optional cover image for the homepage card
 posts/<slug>.md            one post per file (the content)
+about/<tab>.md             one section of the about page per file
 .ok/                       OpenKnowledge project: config, templates, schemas
 .okignore                  what OpenKnowledge hides (everything but content)
 design/                    the design system: tokens, slide theme, templates
@@ -33,13 +36,14 @@ design/tokens.ts           every colour, typeface and shape; the only source
 design/slidev-theme/       slidev-theme-terminal, used by every deck
 design/templates/          specimen deck and diagram templates (not published)
 src/site.config.ts         site name, homepage copy, header links, type labels
-src/content.config.ts      the `decks` and `posts` collections
-src/pages/                 Astro pages (index, 404, posts/[slug])
+src/content.config.ts      the `decks`, `posts` and `about` collections
+src/pages/                 Astro pages (index, about, 404, posts/[slug])
 src/components/            DeckWall, DeckCard, PostList, Prompt, PromptPrefix
 src/layouts/Base.astro     html shell, header, footer
 src/styles/global.css      imports the design tokens; homepage layout values
 scripts/lib/decks.ts       deck discovery and validation, shared by everything
 scripts/lib/posts.ts       post discovery and validation
+scripts/lib/about.ts       about section discovery and validation
 scripts/                   new-deck, new-post, deck (dev server), check-*, build-decks
 scripts/design-build.ts    generates token files from design/tokens.ts
 scripts/templates/         the template a new deck starts from
@@ -349,6 +353,36 @@ tokens); diagrams as fenced `mermaid` blocks copied from
 column is 76 characters wide and a diagram renders at its natural size),
 rendered in the browser with the same configuration as slides. Relative links between posts (`./other-post.md`)
 are fine; OpenKnowledge checks them. The content rules for decks apply.
+
+## The about page
+
+`/about/` is built from `about/<tab>.md`, one file per tab. The file name is
+the tab label and the URL fragment (`/about/#experience`).
+
+```yaml
+---
+title: Experience     # the section heading
+order: 2              # tab position; intro.md is 1
+description: …        # intro.md only: the page's link preview
+draft: false          # true leaves the tab off the published site
+---
+```
+
+- `intro.md` is required and cannot be a draft. Every other tab is
+  optional: delete the file or set `draft: true` and the tab disappears.
+  With one section left, the tab row disappears too.
+- Headings inside a section are `###`; the title is the section's `h2`.
+- Experience is written as areas of work and years. **No employer or
+  client names**, no job titles, the same rule as decks.
+- Open source is a short, chosen list linking to GitHub, not every pull
+  request; the last line links to the full search. Nothing is fetched from
+  GitHub at build time.
+- Links to pages of this site need a full URL; `.md` links are not
+  rewritten outside posts.
+
+`pnpm check` enforces the rules (`scripts/lib/about.ts`); OpenKnowledge
+shows them through `.ok/schemas/about.json`. The header link comes from
+`pages` in `src/site.config.ts`.
 
 ## Writing with OpenKnowledge
 

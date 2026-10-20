@@ -1,0 +1,206 @@
+---
+import { getCollection, render } from 'astro:content';
+import Prompt from '../components/Prompt.astro';
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+
+// One section per file in about/, in `order`. Drafts show while developing.
+const entries = (await getCollection('about', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const sections = await Promise.all(
+  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+const intro = entries.find((entry) => entry.id === 'intro');
+const description = intro?.data.description || site.description;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: site.author.name,
+    url: site.author.url,
+    description,
+    sameAs: site.links.map((l) => l.href),
+  },
+};
+---
+
+<Base title="About" description={description} ogImage="about" jsonLd={jsonLd}>
+  <div class="about">
+    <h1 class="visually-hidden">About</h1>
+
+    {
+      sections.length > 1 && (
+        <div class="tabs" role="tablist" aria-label="About sections" data-tabs hidden>
+          <span aria-hidden="true">--tab</span>
+          {sections.map(({ entry }, index) => (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${entry.id}`}
+              aria-controls={`about-${entry.id}`}
+              data-tab={entry.id}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+            >
+              {entry.id}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      sections.map(({ entry, Content }) => (
+        <section
+          class="about-section"
+          id={`about-${entry.id}`}
+          aria-labelledby={`heading-${entry.id}`}
+          data-section={entry.id}
+        >
+          <Prompt command={`cat about/${entry.id}.md`} />
+          <h2 id={`heading-${entry.id}`}>{entry.data.title}</h2>
+          {entry.data.draft && <p class="about-draft">draft, hidden when published</p>}
+          <div class="prose">
+            <Content />
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<script>
+  // Without JavaScript every section shows, one after another. With it, the
+  // sections become tabs and the URL fragment (#experience) names the open
+  // one. Sections are id'd about-<tab>, so the browser never scrolls to one.
+  const tablist = document.querySelector<HTMLElement>('[data-tabs]');
+  const tabs = [...(tablist?.querySelectorAll<HTMLButtonElement>('[role="tab"]') ?? [])];
+  const panels = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+
+  function select(name: string) {
+    const index = Math.max(
+      0,
+      panels.findIndex((panel) => panel.dataset.section === name),
+    );
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+    });
+    panels.forEach((panel, i) => {
+      panel.hidden = i !== index;
+    });
+  }
+
+  if (tablist && tabs.length > 1) {
+    tablist.hidden = false;
+    for (const panel of panels) {
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', `tab-${panel.dataset.section}`);
+      panel.tabIndex = 0;
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        const name = tab.dataset.tab ?? '';
+        select(name);
+        history.replaceState(null, '', i === 0 ? location.pathname : `#${name}`);
+      });
+      // Arrow keys move between tabs, as in any tab list.
+      tab.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowLeft: -1, Home: -i, End: tabs.length - 1 - i }[event.key];
+        if (step === undefined) return;
+        event.preventDefault();
+        const next = tabs[(i + step + tabs.length) % tabs.length];
+        next?.click();
+        next?.focus();
+      });
+    });
+
+    select(location.hash.slice(1));
+    window.addEventListener('hashchange', () => select(location.hash.slice(1)));
+  }
+</script>
+
+<style>
+  /* A reading column, like a post. */
+  .about {
+    max-width: 76ch;
+    margin-inline: auto;
+    padding-block: clamp(2rem, 6vw, 4rem) 0;
+  }
+
+  /* Tabs read as an option on a command, like the deck filters. */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem 0.5rem;
+    margin-bottom: 2rem;
+    color: var(--color-ink-soft);
+  }
+
+  .tabs[hidden] {
+    display: none;
+  }
+
+  .tabs button {
+    padding: 0.125rem 1ch;
+    background: transparent;
+    border: var(--border) solid var(--color-line);
+    border-radius: var(--radius);
+    color: var(--color-ink-soft);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .tabs button:hover {
+    border-color: var(--color-ink-soft);
+    color: var(--color-ink);
+  }
+
+  .tabs button[aria-selected='true'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  /* Without tabs the sections follow each other with room between them. */
+  .about-section + .about-section {
+    margin-top: 3.5rem;
+  }
+
+  .about-section[hidden] {
+    display: none;
+  }
+
+  .about-section:focus-visible {
+    outline: none;
+  }
+
+  .about-section h2 {
+    margin-top: 1rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: var(--weight-strong);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .about-draft {
+    margin-top: 0.75rem;
+    color: var(--color-flag);
+    font-size: var(--text-sm);
+  }
+
+  .prose {
+    margin-top: 1.5rem;
+  }
+
+  /* The first heading in a section sits close to the title. */
+  .prose > :global(h3:first-child) {
+    margin-top: 0;
+  }
+</style>

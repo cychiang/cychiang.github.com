@@ -68,8 +68,15 @@ const image = new URL(`${base}/og/${ogImage}.png`, Astro.site);
   <body>
     <header class="page site-header">
       <a class="site-name" href={`${base}/`}>{site.name}</a>
-      <nav aria-label="Elsewhere">
+      <nav aria-label="Site">
         <ul>
+          {site.pages.map((page) => {
+            const href = `${base}/${page.path}`;
+            const current = Astro.url.pathname.replace(/\/?$/, '/') === href;
+            return (
+              <li><a href={href} aria-current={current ? 'page' : undefined}>{page.label}</a></li>
+            );
+          })}
           {site.links.map((link) => (
             <li><a href={link.href} rel="me">{link.label}</a></li>
           ))}
@@ -120,6 +127,10 @@ const image = new URL(`${base}/og/${ogImage}.png`, Astro.site);
     display: inline-block;
     padding: 0.625rem 0.25rem;
     margin: -0.625rem 0;
+  }
+
+  nav a[aria-current='page'] {
+    color: var(--color-ink);
   }
 
   main {

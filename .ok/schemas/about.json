@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "About section frontmatter",
+  "description": "One tab of /about/ in about/<tab>.md. Mirrors scripts/lib/about.ts.",
+  "type": "object",
+  "required": ["title", "order"],
+  "properties": {
+    "title": { "type": "string", "minLength": 1, "description": "The heading of the section." },
+    "description": { "type": "string", "description": "Required in intro.md: one sentence for link previews of the about page." },
+    "order": { "type": "integer", "description": "Position of the tab; intro.md comes first." },
+    "draft": { "type": "boolean", "description": "true leaves the tab off the published site. intro.md cannot be a draft." }
+  }
+}

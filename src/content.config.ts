@@ -46,4 +46,16 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { decks, posts };
+// The about page: one Markdown file per tab in about/. The file name is the
+// tab; scripts/check-about.ts enforces the rules in scripts/lib/about.ts.
+const about = defineCollection({
+  loader: glob({ pattern: '*.md', base: './about' }),
+  schema: z.object({
+    title: z.string().min(1),
+    description: z.string().default(''),
+    order: z.number().int(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { decks, posts, about };
