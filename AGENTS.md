@@ -12,8 +12,8 @@ that are built separately and published together:
 - **Decks**: each one is a [Slidev](https://sli.dev) presentation in
   `decks/<slug>/slides.md`, published at `/decks/<slug>/`.
 - **Posts**: Markdown notes in `posts/<slug>.md`, published at
-  `/posts/<slug>/`, usually written in OpenKnowledge (see "Writing with
-  OpenKnowledge").
+  `/posts/<slug>/`. All content is written in a private repository and
+  synced here (see "Where content comes from").
 - **About**: one Markdown file per tab in `about/`, published together at
   `/about/` (see "The about page").
 - **Homepage**: an [Astro](https://astro.build) site in `src/` that shows every
@@ -147,6 +147,10 @@ often.
   is not finished.
 
 ## Adding a deck
+
+Decks are written in the private repository and synced here (see "Where
+content comes from"); the steps below are the same there, with its
+`pnpm site` for previews. `pnpm new:deck` here is for trying the toolchain.
 
 1. Pick the slug: `<year>-<short-title>`, lowercase, hyphenated, for example
    `2026-building-a-provider`. The slug is the public URL. **Never rename a
@@ -329,8 +333,8 @@ deck and `design/README.md`) so every deck gets it.
 ## Writing a post
 
 A post is one Markdown file, `posts/<year>-<short-title>.md`. The file name
-is the URL. Create one with `pnpm new:post <slug> "Title"` or from the
-"Post" template in OpenKnowledge.
+is the URL. Create it in the private repository from the "Post" template in
+OpenKnowledge and list it in `publish.yml` there.
 
 ```yaml
 ---
@@ -384,29 +388,33 @@ draft: false          # true leaves the tab off the published site
 shows them through `.ok/schemas/about.json`. The header link comes from
 `pages` in `src/site.config.ts`.
 
-## Writing with OpenKnowledge
+## Where content comes from
 
-[OpenKnowledge](https://openknowledge.ai) is the editor for posts (and can
-edit decks). It opens this repository as its project; `.ok/config.yml`,
-`.okignore`, the templates and the schemas are committed so every clone
-behaves the same. Its machine-local state (`.ok/local/`) is ignored.
+This repository is public, so content is written elsewhere: in the private
+repository `cychiang/knowledge`, usually in
+[OpenKnowledge](https://openknowledge.ai). That repository holds every
+deck, post and about tab, private ones and working notes included. Its
+`publish.yml` lists what is public, and its GitHub Action copies exactly
+those items here as a pull request ("Sync content from the knowledge
+repository", branch `sync/knowledge`).
 
-The flow:
+1. Content is written and committed in `cychiang/knowledge`.
+2. A push there that touches published content opens or updates the sync
+   pull request here.
+3. This repository's workflow runs `pnpm check` and a build on it.
+4. Merging it publishes. Only `main` deploys.
 
-1. The OpenKnowledge checkout stays on the **`writing`** branch. Its
-   auto-sync commits and pushes there on its own; nothing on `writing` is
-   published.
-2. Every push to `writing` runs `pnpm check` and a build in CI, so a bad
-   frontmatter or a broken link shows up there first.
-3. Publishing is a merge of `writing` into `main` (a pull request, or a
-   local merge and push). Only `main` deploys.
-4. Code changes go the other way: after a change lands on `main`, merge
-   `main` into `writing` so OpenKnowledge keeps syncing without conflicts.
+Consequences for this repository:
 
-Agents working in the repository should not commit content on `writing`
-while OpenKnowledge has it open elsewhere; make the change on a branch from
-`main` and merge. The `ok` CLI needs Node 24 or newer; the site itself
-builds on Node 22 (`.nvmrc`), and the two do not conflict.
+- `decks/`, `posts/` and `about/` are owned by the sync: each sync replaces
+  them with the published items. Do not edit content here; change it in
+  `cychiang/knowledge`. A fix made here is overwritten by the next sync.
+- Of a deck folder only `slides.md`, `cover.*` and the folders `pages/`,
+  `images/`, `public/`, `components/`, `layouts/`, `snippets/` are
+  published. Notes and reviews next to a deck stay private.
+- The rules stay here: `pnpm check`, the schemas in `.ok/schemas/` and this
+  file. When a rule changes, copy the changed schema to `cychiang/knowledge`.
+- Code changes are ordinary branches from `main`.
 
 ## Adding other kinds of content
 
