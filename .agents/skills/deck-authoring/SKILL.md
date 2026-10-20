@@ -11,16 +11,27 @@ Decks are Slidev presentations in `decks/<slug>/slides.md`, published at
 (`.agents/skills/slidev/SKILL.md`) for Slidev syntax. This skill is the
 working order.
 
+Decks are written in the private repository `cychiang/knowledge` and
+synced here (`AGENTS.md`, "Where content comes from"). A deck edited only
+in this repository is overwritten by the next sync.
+
 ## Create
 
+In `cychiang/knowledge`: create `decks/<year>-<kebab>/slides.md` from the
+"Deck (slides.md)" template in OpenKnowledge, then preview it with the
+public toolchain:
+
 ```bash
-pnpm new:deck 2026-short-title "Deck title"   # <year>-<kebab>, becomes the URL
-pnpm deck 2026-short-title                     # dev server, http://localhost:3030
+pnpm site                                   # copies every item into .site/
+pnpm --dir .site install
+pnpm --dir .site deck 2026-short-title      # dev server, http://localhost:3030
 ```
 
-Never rename a published deck's folder; links would break. In OpenKnowledge
-the "Deck (slides.md)" template gives the same headmatter; create the file
-as `decks/<slug>/slides.md`.
+In this repository, `pnpm new:deck` and `pnpm deck` still work for trying
+the toolchain or the theme. Never rename a published deck's folder; links
+would break. Notes and reviews may sit next to `slides.md` in the private
+repository; only `slides.md`, `cover.*` and the folders `pages/`,
+`images/`, `public/`, `components/`, `layouts/`, `snippets/` are synced.
 
 ## Headmatter
 
@@ -29,7 +40,7 @@ as `decks/<slug>/slides.md`.
 theme: terminal           # required
 title: Deck title
 info: |
-  One or two plain sentences; shown under the card on the homepage.
+  One or two plain sentences, for link previews and the feed.
 routerMode: hash          # required (GitHub Pages cannot rewrite URLs)
 themeConfig:              # optional: the prompt line on the cover and in <Prompt>
   prompt: { user: cychiang, host: kubecon, path: "~" }
@@ -86,9 +97,14 @@ claim with something concrete. Sentence case; English.
 
 ## Publish
 
-1. Set `card.draft: false`.
-2. `pnpm check` (validates the deck) and `pnpm build`.
-3. Open `pnpm preview`, check the card on the homepage and the deck in
-   light and dark, and that "All decks" leads back.
-4. Commit. Pushing `main` publishes; the live site may show the previous
-   build for up to ten minutes (hard-reload before concluding otherwise).
+1. Set `card.draft: false` and add the slug under `decks:` in
+   `publish.yml` in `cychiang/knowledge`.
+2. In `.site/`: `pnpm check` (validates the deck) and `pnpm build`, then
+   `pnpm preview`; check the card on the homepage and the deck in light
+   and dark, and that "All decks" leads back.
+3. Commit and push in `cychiang/knowledge`. The sync action opens or
+   updates the pull request "Sync content from the knowledge repository"
+   here; it runs the same checks.
+4. Merging that pull request publishes. The live site may show the
+   previous build for up to ten minutes (hard-reload before concluding
+   otherwise).

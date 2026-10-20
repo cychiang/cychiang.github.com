@@ -105,7 +105,7 @@ built by Slidev, not by the Astro dev server. To review the whole site, run
 - **`deck-authoring`** (`.agents/skills/deck-authoring/SKILL.md`): the
   working order for creating or editing a deck. Use it for any slides.
 - **`post-authoring`** (`.agents/skills/post-authoring/SKILL.md`): the
-  working order for a post, including the OpenKnowledge branch flow.
+  working order for a post, including the private repository and its sync.
 - **`terminal-design`** (`.agents/skills/terminal-design/SKILL.md`): the
   procedure for any visual change or style audit. Use it before touching
   colours, type, components, layouts or diagram styling.
