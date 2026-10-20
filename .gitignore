@@ -25,3 +25,6 @@ npm-debug.log*
 # OS and editors
 .DS_Store
 .idea/
+
+# local only, never published or committed
+decks/2026-platform-works-story/

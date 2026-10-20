@@ -17,6 +17,10 @@ contentRules:
         appliesTo: "posts/**/*.md"
       - file: .ok/schemas/deck.json
         appliesTo: "decks/*/slides.md"
+  okf:
+    enabled: true
+  markdownlint:
+    enabled: false
 
 validation:
   links: error
