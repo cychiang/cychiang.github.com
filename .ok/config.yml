@@ -27,7 +27,8 @@ contentRules:
 validation:
   links: error
 
-# New machines start in pull-and-push mode on the writing branch; publishing
-# is a merge into main (see AGENTS.md, "Writing with OpenKnowledge").
+# Content is written in the private repository cychiang/knowledge, which
+# keeps a copy of this config and the schemas (see AGENTS.md, "Where content
+# comes from"). This copy is the source when the rules change.
 autoSync:
   default: full
