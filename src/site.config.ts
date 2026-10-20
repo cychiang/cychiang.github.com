@@ -8,9 +8,6 @@ export const site = {
   name: 'Chuan-Yen Chiang',
   /** The homepage headline. */
   headline: 'Slide decks and notes on platform engineering.',
-  /** One or two sentences under the headline. */
-  intro:
-    'I work on cloud platforms in Stockholm and contribute to open source. This is where the decks from that work will live. The first ones are on their way.',
   /** Used for <meta name="description"> and link previews. */
   description: 'Slide decks and notes on platform engineering by Chuan-Yen Chiang.',
   /** The page language, for <html lang> and the feed. */

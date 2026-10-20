@@ -25,23 +25,26 @@ const jsonLd = {
 ---
 
 <Base jsonLd={jsonLd}>
-  <section class="intro">
-    <Prompt command="cat about.txt" />
-    <h1>{site.headline}</h1>
-    <p class="intro-text">{site.intro}</p>
-  </section>
+  <div class="home">
+    <section class="intro">
+      <Prompt command="cat about.txt" />
+      <h1>{site.headline}</h1>
+    </section>
 
-  <section class="decks">
-    <Prompt command="ls decks/" />
-    <h2 class="visually-hidden">Decks</h2>
-    <DeckWall decks={decks} />
-  </section>
+    <div class="columns">
+      <section class="posts">
+        <Prompt command="ls posts/" />
+        <h2 class="visually-hidden">Posts</h2>
+        <PostList posts={posts} />
+      </section>
 
-  <section class="posts">
-    <Prompt command="ls posts/" />
-    <h2 class="visually-hidden">Posts</h2>
-    <PostList posts={posts} />
-  </section>
+      <section class="decks">
+        <Prompt command="ls decks/" />
+        <h2 class="visually-hidden">Decks</h2>
+        <DeckWall decks={decks} />
+      </section>
+    </div>
+  </div>
 </Base>
 
 <style>
@@ -60,19 +63,80 @@ const jsonLd = {
     text-wrap: balance;
   }
 
-  .intro-text {
-    max-width: 68ch;
-    margin-top: 1.25rem;
-    color: var(--color-ink-soft);
-  }
-
-  .decks :global(.prompt),
-  .posts :global(.prompt) {
+  .posts :global(.prompt),
+  .decks :global(.prompt) {
     margin-bottom: 1.25rem;
   }
 
-  .posts {
-    max-width: 76ch;
+  .decks {
     margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .posts,
+  .decks {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* Posts on the left, decks on the right, once both have room. */
+  @media (min-width: 60rem) {
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: calc(var(--wall-gap) * 2);
+      align-items: start;
+    }
+
+    .decks {
+      margin-top: 0;
+    }
+  }
+
+  /* The whole page fits one screen: the lists take the height that is left
+     and src/scripts/pager.ts pages them. Only while paging runs, so without
+     JavaScript the page scrolls and shows everything. Mirrors FIT_QUERY. */
+  @media (min-width: 60rem) and (min-height: 34rem) {
+    :global(html.paged body) {
+      height: 100dvh;
+    }
+
+    :global(html.paged main) {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    :global(html.paged .site-footer) {
+      margin-top: 0;
+    }
+
+    :global(html.paged) .home {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
+      padding-bottom: 1.5rem;
+    }
+
+    :global(html.paged) .intro {
+      padding-block: clamp(1.25rem, 4vh, 2.5rem);
+    }
+
+    :global(html.paged) h1 {
+      max-width: none;
+      font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    }
+
+    :global(html.paged) .columns {
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    :global(html.paged) .posts,
+    :global(html.paged) .decks {
+      min-height: 0;
+    }
   }
 </style>

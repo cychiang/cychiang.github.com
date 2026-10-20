@@ -168,7 +168,7 @@ describes it for the homepage.
 theme: terminal           # always; the design system's theme
 title: Building a provider from scratch
 info: |
-  One or two plain sentences. Shown under the card on the homepage.
+  One or two plain sentences. Used for link previews and the feed.
 routerMode: hash          # required, see "Deck rules"
 themeConfig:              # optional: the prompt line (user@host:path$)
   prompt: { user: cychiang, host: kubecon, path: "~" }
@@ -258,6 +258,14 @@ correct this section in the same commit.
 - **Wall layout, filters, empty slots**: `src/components/DeckWall.astro`.
   Filter buttons appear on their own once decks of more than one type exist.
   The dashed empty slots disappear once there are three decks.
+- **Page layout and paging**: `src/pages/index.astro` and
+  `src/scripts/pager.ts`. From 60rem wide and 34rem tall the homepage fits
+  one screen: the headline, then posts on the left and decks on the right,
+  each paged with `<Pager>` to as many items as fit. Narrower or shorter
+  screens stack the two and scroll, with 5 posts or 4 decks per page.
+  Without JavaScript nothing is paged and everything shows. Both lists are
+  newest first. The media query lives in both files (`FIT_QUERY`); change
+  them together.
 - **A new deck type**: add it to `DECK_TYPES` in `scripts/lib/decks.ts` and
   give it a label in `typeLabels` in `src/site.config.ts`.
 - **A new field on the card**: add it to the `Deck` interface and `readDeck()`
@@ -280,7 +288,12 @@ has the vocabulary. Rules specific to the homepage:
   also be possible with mouse or touch, it must not take focus on load, and
   the page must still work without JavaScript.
 - Decks are panes: path in the title bar, slide in the body, date and length
-  in the status line.
+  in the status line. Every pane is the same size: the body is always 16:9
+  and never grows, a typeset title is cut to three lines with an ellipsis,
+  a cover image is cropped to fill, and the dashed empty slot is built from
+  the same bar, body and status line. The homepage shows titles only: no description under a
+  deck or a post, and no intro paragraph under the headline. Descriptions
+  are still written, for link previews and the feed.
 - Lowercase for labels that mimic commands, paths and flags (`github`,
   `--type all`); sentence case for prose and headings.
 - The blinking cursor in the first empty slot is the only animation.
@@ -318,7 +331,7 @@ is the URL. Create one with `pnpm new:post <slug> "Title"` or from the
 ```yaml
 ---
 title: Why reconcile loops
-description: One sentence, shown under the title on the homepage.
+description: One sentence, for link previews and the feed.
 date: 2026-10-10        # YYYY-MM-DD; the year must match the file name
 tags: [crossplane]      # optional
 draft: true             # false to publish

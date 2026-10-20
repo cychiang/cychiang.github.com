@@ -1,7 +1,8 @@
 ---
-// Posts as a listing: one row per post, like `ls -l` with the description
-// as a comment beneath. Newest first.
+// Posts as a listing: one row per post, like `ls -l`, date and title only.
+// Newest first, paged by src/scripts/pager.ts.
 import type { CollectionEntry } from 'astro:content';
+import Pager from './Pager.astro';
 
 interface Props {
   posts: CollectionEntry<'posts'>[];
@@ -15,26 +16,32 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
   posts.length === 0 ? (
     <p class="empty">No posts yet.<span class="cursor" aria-hidden="true" /></p>
   ) : (
-    <ol class="posts">
+    <ol class="posts" data-post-list>
       {posts.map((post) => {
         const iso = post.data.date.toISOString().slice(0, 10);
         return (
           <li class="post">
-            <div class="post-line">
-              <time datetime={iso}>{iso}</time>
-              <a href={`${base}/posts/${post.id}/`}>{post.data.title}</a>
-              {post.data.draft && <span class="post-draft">draft</span>}
-            </div>
-            <p class="post-description">{post.data.description}</p>
-            {post.data.tags.length > 0 && (
-              <p class="post-tags">{post.data.tags.map((tag) => `#${tag}`).join(' ')}</p>
-            )}
+            <time datetime={iso}>{iso}</time>
+            <a href={`${base}/posts/${post.id}/`}>{post.data.title}</a>
+            {post.data.draft && <span class="post-draft">draft</span>}
           </li>
         );
       })}
     </ol>
   )
 }
+
+{posts.length > 0 && <Pager name="posts" label="Posts pages" />}
+
+<script>
+  import { createPager } from '../scripts/pager';
+
+  const list = document.querySelector<HTMLElement>('[data-post-list]');
+  if (list) {
+    const posts = [...list.children] as HTMLElement[];
+    createPager({ list, name: 'posts', items: () => posts, perPage: 5 });
+  }
+</script>
 
 <style>
   .posts {
@@ -43,20 +50,38 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     list-style: none;
   }
 
+  /* One line per post, so every row is the same height and a page is an
+     exact number of rows. A long title ends in an ellipsis. */
   .post {
+    display: flex;
+    gap: 2ch;
+    align-items: baseline;
+    min-width: 0;
+    white-space: nowrap;
     padding: 0.75rem 0;
-    border-top: var(--border) solid var(--color-line);
-  }
-
-  .post:last-child {
     border-bottom: var(--border) solid var(--color-line);
   }
 
-  .post-line {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 2ch;
-    align-items: baseline;
+  .post:not([hidden]) {
+    border-top: var(--border) solid var(--color-line);
+  }
+
+  .post:not([hidden]) ~ .post {
+    border-top: 0;
+  }
+
+  .post[hidden] {
+    display: none;
+  }
+
+  /* On one screen the list takes the height it is given; the pager decides
+     how many rows that is. */
+  @media (min-width: 60rem) and (min-height: 34rem) {
+    :global(html.paged) .posts {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
   }
 
   time {
@@ -65,30 +90,14 @@ const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
     font-variant-numeric: tabular-nums;
   }
 
-  .post-line a {
+  .post a {
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: var(--weight-strong);
   }
 
   .post-draft {
     color: var(--color-flag);
-    font-size: var(--text-sm);
-  }
-
-  .post-description {
-    margin-top: 0.125rem;
-    padding-left: 2ch;
-    text-indent: -2ch;
-    color: var(--color-ink-soft);
-    font-size: var(--text-sm);
-  }
-
-  .post-description::before {
-    content: '# ';
-  }
-
-  .post-tags {
-    margin-top: 0.125rem;
-    color: var(--color-ink-soft);
     font-size: var(--text-sm);
   }
 

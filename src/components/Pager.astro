@@ -1,0 +1,59 @@
+---
+// Previous and next for a paged list, read as a flag on the command above it.
+// Hidden until src/scripts/pager.ts starts paging; space is kept when there
+// is only one page so the list above it does not change height.
+interface Props {
+  /** Matches the `name` passed to createPager(). */
+  name: string;
+  /** For screen readers, for example "Posts pages". */
+  label: string;
+}
+
+const { name, label } = Astro.props;
+---
+
+<nav class="pager" data-pager={name} aria-label={label} hidden>
+  <button type="button" data-prev aria-label="Previous page">prev</button>
+  <span data-status aria-live="polite">--page 1/1</span>
+  <button type="button" data-next aria-label="Next page">next</button>
+</nav>
+
+<style>
+  .pager {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem 1ch;
+    margin-top: 1rem;
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pager[hidden] {
+    display: none;
+  }
+
+  .pager[data-single] {
+    visibility: hidden;
+  }
+
+  button {
+    padding: 0.125rem 1ch;
+    background: transparent;
+    border: var(--border) solid var(--color-line);
+    border-radius: var(--radius);
+    color: var(--color-ink-soft);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button:hover:not(:disabled) {
+    border-color: var(--color-ink-soft);
+    color: var(--color-ink);
+  }
+
+  button:disabled {
+    border-style: dashed;
+    cursor: default;
+  }
+</style>

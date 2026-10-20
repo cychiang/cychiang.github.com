@@ -144,7 +144,13 @@ home. Headings are strong with a rule under `h2`; lists, quotes, tables and
 code blocks look exactly as they do on slides; code is coloured by the same
 Shiki themes (`design/shiki.ts`); fenced `mermaid` blocks render in the
 browser with `design/mermaid.ts`. On the homepage, posts are a listing
-under `ls posts/`: date, title, description as a comment, tags.
+under `ls posts/`: one line per post, date and title, a long title ending in
+an ellipsis.
+
+On a screen at least 60rem wide and 34rem tall the homepage fits without
+scrolling: the headline, then posts and decks side by side, each with a
+pager (`prev --page 1/3 next`, styled like the `--type` filter) that shows
+as many items as fit. Smaller screens stack the two lists and scroll.
 
 ## Screens of every size
 
