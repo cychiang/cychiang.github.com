@@ -475,7 +475,7 @@ and on every push to `main` (check, build, deploy to GitHub Pages).
 
 ### Dependencies
 
-- Node.js 22.18 or newer (`.nvmrc`), because scripts rely on Node running
+- Node.js 26 or newer (`.nvmrc`), because scripts rely on Node running
   TypeScript directly.
 - Add packages with `pnpm add <name>` (or `pnpm add -D`). pnpm holds back
   versions published in the last few days; prefer a slightly older version
