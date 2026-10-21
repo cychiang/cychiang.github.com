@@ -1,48 +1,72 @@
 ---
 title: How this site is published
-description: Notes are written in OpenKnowledge, land in this repository, and a merge turns them into pages.
+description: Knowledge as code in a private repository, a list of what is public, and a pull request that publishes it.
 date: 2026-10-10
 tags: [meta, openknowledge]
 draft: false
 ---
 
-This site has two kinds of content: slide decks under `decks/`, and notes
-like this one under `posts/`. Both are Markdown files in one Git
-repository, and both reach the homepage the same way.
+Everything on this site starts as a Markdown file in a private Git
+repository. A list in that repository decides what is public, and an
+automated pull request publishes it.
 
-## The loop
+## Knowledge as code
+
+Decks, posts, the about page, drafts and working notes are plain Markdown
+files under version control. I write them in OpenKnowledge, which commits
+and pushes every change. Like code, every change has a history, can be
+reviewed, and is checked before it ships.
+
+## Private and public, managed separately
 
 ```mermaid
 flowchart TD
-  ok[OpenKnowledge]:::focus -- "auto-sync, every minute" --> writing[(writing branch)]:::store
-  writing -. "pnpm check" .-> ci[Checks]
-  writing -- "merge" --> main[(main)]:::store
-  main -- "GitHub Actions" --> site[cychiang.github.io]:::ok
+  ok[OpenKnowledge]:::ext -- "auto-sync" --> content
+  subgraph private[knowledge, private]
+    direction TB
+    content[(decks, posts, notes)]:::store
+    list[publish.yml]:::focus
+  end
+  subgraph public[cychiang.github.io, public]
+    direction TB
+    published[(published content)]:::store
+    code[site code and rules]
+  end
+  list -- "sync pull request" --> published
+  published --> pages[GitHub Pages]:::ok
+  code --> pages
 ```
 
-Writing happens in OpenKnowledge, which opens this repository as its
-project with the `writing` branch checked out. Every edit is committed and
-pushed on its own. Nothing is published yet: the `writing` branch only runs
-the checks, so a broken frontmatter or a dead link shows up as a red mark
-and not as a broken page.
+- **knowledge** (private) holds everything I write.
+- **publish.yml** lists the items that are public. Anything not listed,
+  and any note next to a deck, stays private.
+- **cychiang.github.io** (public) holds the site code, the design system,
+  the checks and the published content only.
 
-Publishing is one deliberate step: merge `writing` into `main`. The
-deploy workflow builds the homepage and every deck, and the site is live a
-minute or two later.
+Content is private by default. Publishing is a line in one file, not a
+file that has to be kept out of a public repository.
 
-## What a post needs
+## Automated publishing
 
-```yaml
----
-title: How this site is published
-description: One sentence, shown on the homepage.
-date: 2026-10-10
-tags: [meta]
-draft: false
----
+```mermaid
+sequenceDiagram
+  participant K as knowledge
+  participant Site as public repo
+  participant Pages as GitHub Pages
+
+  Note over K: OpenKnowledge pushes
+  K->>Site: sync pull request
+  Note over Site: checks and a build
+  Site->>Pages: merge deploys
 ```
 
-The file name is the address: `posts/2026-how-this-site-is-published.md`
-becomes `/posts/2026-how-this-site-is-published/`. A post with
-`draft: true` stays out of the published site, which is how half-written
-thoughts can live in the same place as finished ones.
+1. A push that changes published content starts a GitHub Action in the
+   private repository.
+2. The action copies exactly the listed items into the public repository
+   and opens a pull request.
+3. The public repository checks the frontmatter and links and builds the
+   whole site.
+4. Merging the pull request deploys the site to GitHub Pages.
+
+The one manual step is the merge, so nothing is published without a last
+look.
