@@ -6,7 +6,7 @@
   "description": "Personal site: a wall of Slidev decks, built with Astro.",
   "packageManager": "pnpm@12.10.1",
   "engines": {
-    "node": ">=22.18.0"
+    "node": ">=24.11.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -36,18 +36,18 @@
     "@resvg/resvg-js": "^2.6.2",
     "@slidev/cli": "^53.0.0",
     "@slidev/parser": "^53.0.0",
-    "astro": "^7.4.0",
-    "mermaid": "^12.1.0",
-    "satori": "^0.47.1",
+    "astro": "^7.4.1",
+    "mermaid": "^12.2.0",
+    "satori": "^0.63.2",
     "slidev-addon-site": "workspace:*",
     "slidev-theme-terminal": "workspace:*",
-    "vue": "^3.5.43",
+    "vue": "^3.5.44",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.11",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "@types/node": "^22.18.0",
+    "@types/node": "^24.19.2",
     "typescript": "^6.0.3"
   }
 }
