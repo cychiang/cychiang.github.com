@@ -14,6 +14,10 @@ updates:
       # does, then confirm with `pnpm check`.
       - dependency-name: typescript
         update-types: ['version-update:semver-major']
+      # The types follow the Node version in .nvmrc (the current LTS). Move
+      # both together when the next LTS is released.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

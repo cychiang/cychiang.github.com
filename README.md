@@ -12,7 +12,7 @@ in [AGENTS.md](AGENTS.md).
 
 ## Quick start
 
-Requires Node.js 26 or newer and [pnpm](https://pnpm.io) (`corepack enable`
+Requires Node.js 24.11 or newer and [pnpm](https://pnpm.io) (`corepack enable`
 installs the version pinned in `package.json`).
 
 ```bash
