@@ -6,6 +6,10 @@ written in [OpenKnowledge](https://openknowledge.ai), and the homepage is built
 with [Astro](https://astro.build). Pushing to `main` publishes everything to
 GitHub Pages.
 
+The content in `decks/`, `posts/` and `about/` is written in a private
+repository and arrives here as pull requests; see "Where content comes from"
+in [AGENTS.md](AGENTS.md).
+
 ## Quick start
 
 Requires Node.js 22.18 or newer and [pnpm](https://pnpm.io) (`corepack enable`
@@ -24,15 +28,16 @@ pnpm new:deck 2026-my-talk "My talk title"
 pnpm deck 2026-my-talk
 ```
 
-Write the slides in `decks/2026-my-talk/slides.md`, set `card.draft: false` when
-it is ready, and push. The homepage card is generated from the deck's
-headmatter.
+Write the slides in `decks/2026-my-talk/slides.md` and set `card.draft: false`
+when it is ready. The homepage card is generated from the deck's headmatter.
+To keep it, move the folder to the private repository and list it in its
+`publish.yml`; the next sync replaces `decks/` here.
 
 ## Write a post
 
-Open the repository in OpenKnowledge on the `writing` branch and create a
-document from the "Post" template, or run `pnpm new:post 2026-my-note "Title"`.
-Set `draft: false` when it is ready and merge `writing` into `main`.
+Create it in the private repository, in OpenKnowledge from the "Post"
+template. Set `draft: false` and list it in `publish.yml`, then merge the sync
+pull request here.
 
 ## Build
 

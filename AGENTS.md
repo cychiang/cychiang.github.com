@@ -12,8 +12,10 @@ that are built separately and published together:
 - **Decks**: each one is a [Slidev](https://sli.dev) presentation in
   `decks/<slug>/slides.md`, published at `/decks/<slug>/`.
 - **Posts**: Markdown notes in `posts/<slug>.md`, published at
-  `/posts/<slug>/`, usually written in OpenKnowledge (see "Writing with
-  OpenKnowledge").
+  `/posts/<slug>/`. All content is written in a private repository and
+  synced here (see "Where content comes from").
+- **About**: one Markdown file per tab in `about/`, published together at
+  `/about/` (see "The about page").
 - **Homepage**: an [Astro](https://astro.build) site in `src/` that shows every
   published deck as a card on a wall and lists every published post. Cards
   and rows are generated from each file's frontmatter. Nothing is written
@@ -25,6 +27,7 @@ that are built separately and published together:
 decks/<slug>/slides.md     one Slidev deck per folder (the content)
 decks/<slug>/cover.png     optional cover image for the homepage card
 posts/<slug>.md            one post per file (the content)
+about/<tab>.md             one section of the about page per file
 .ok/                       OpenKnowledge project: config, templates, schemas
 .okignore                  what OpenKnowledge hides (everything but content)
 design/                    the design system: tokens, slide theme, templates
@@ -33,13 +36,14 @@ design/tokens.ts           every colour, typeface and shape; the only source
 design/slidev-theme/       slidev-theme-terminal, used by every deck
 design/templates/          specimen deck and diagram templates (not published)
 src/site.config.ts         site name, homepage copy, header links, type labels
-src/content.config.ts      the `decks` and `posts` collections
-src/pages/                 Astro pages (index, 404, posts/[slug])
+src/content.config.ts      the `decks`, `posts` and `about` collections
+src/pages/                 Astro pages (index, about, 404, posts/[slug])
 src/components/            DeckWall, DeckCard, PostList, Prompt, PromptPrefix
 src/layouts/Base.astro     html shell, header, footer
 src/styles/global.css      imports the design tokens; homepage layout values
 scripts/lib/decks.ts       deck discovery and validation, shared by everything
 scripts/lib/posts.ts       post discovery and validation
+scripts/lib/about.ts       about section discovery and validation
 scripts/                   new-deck, new-post, deck (dev server), check-*, build-decks
 scripts/design-build.ts    generates token files from design/tokens.ts
 scripts/templates/         the template a new deck starts from
@@ -101,7 +105,7 @@ built by Slidev, not by the Astro dev server. To review the whole site, run
 - **`deck-authoring`** (`.agents/skills/deck-authoring/SKILL.md`): the
   working order for creating or editing a deck. Use it for any slides.
 - **`post-authoring`** (`.agents/skills/post-authoring/SKILL.md`): the
-  working order for a post, including the OpenKnowledge branch flow.
+  working order for a post, including the private repository and its sync.
 - **`terminal-design`** (`.agents/skills/terminal-design/SKILL.md`): the
   procedure for any visual change or style audit. Use it before touching
   colours, type, components, layouts or diagram styling.
@@ -144,6 +148,10 @@ often.
 
 ## Adding a deck
 
+Decks are written in the private repository and synced here (see "Where
+content comes from"); the steps below are the same there, with its
+`pnpm site` for previews. `pnpm new:deck` here is for trying the toolchain.
+
 1. Pick the slug: `<year>-<short-title>`, lowercase, hyphenated, for example
    `2026-building-a-provider`. The slug is the public URL. **Never rename a
    deck folder after it has been published**; links people have shared would
@@ -168,7 +176,7 @@ describes it for the homepage.
 theme: terminal           # always; the design system's theme
 title: Building a provider from scratch
 info: |
-  One or two plain sentences. Shown under the card on the homepage.
+  One or two plain sentences. Used for link previews and the feed.
 routerMode: hash          # required, see "Deck rules"
 themeConfig:              # optional: the prompt line (user@host:path$)
   prompt: { user: cychiang, host: kubecon, path: "~" }
@@ -258,6 +266,14 @@ correct this section in the same commit.
 - **Wall layout, filters, empty slots**: `src/components/DeckWall.astro`.
   Filter buttons appear on their own once decks of more than one type exist.
   The dashed empty slots disappear once there are three decks.
+- **Page layout and paging**: `src/pages/index.astro` and
+  `src/scripts/pager.ts`. From 60rem wide and 34rem tall the homepage fits
+  one screen: the headline, then posts on the left and decks on the right,
+  each paged with `<Pager>` to as many items as fit. Narrower or shorter
+  screens stack the two and scroll, with 5 posts or 4 decks per page.
+  Without JavaScript nothing is paged and everything shows. Both lists are
+  newest first. The media query lives in both files (`FIT_QUERY`); change
+  them together.
 - **A new deck type**: add it to `DECK_TYPES` in `scripts/lib/decks.ts` and
   give it a label in `typeLabels` in `src/site.config.ts`.
 - **A new field on the card**: add it to the `Deck` interface and `readDeck()`
@@ -280,7 +296,12 @@ has the vocabulary. Rules specific to the homepage:
   also be possible with mouse or touch, it must not take focus on load, and
   the page must still work without JavaScript.
 - Decks are panes: path in the title bar, slide in the body, date and length
-  in the status line.
+  in the status line. Every pane is the same size: the body is always 16:9
+  and never grows, a typeset title is cut to three lines with an ellipsis,
+  a cover image is cropped to fill, and the dashed empty slot is built from
+  the same bar, body and status line. The homepage shows titles only: no description under a
+  deck or a post, and no intro paragraph under the headline. Descriptions
+  are still written, for link previews and the feed.
 - Lowercase for labels that mimic commands, paths and flags (`github`,
   `--type all`); sentence case for prose and headings.
 - The blinking cursor in the first empty slot is the only animation.
@@ -312,13 +333,13 @@ deck and `design/README.md`) so every deck gets it.
 ## Writing a post
 
 A post is one Markdown file, `posts/<year>-<short-title>.md`. The file name
-is the URL. Create one with `pnpm new:post <slug> "Title"` or from the
-"Post" template in OpenKnowledge.
+is the URL. Create it in the private repository from the "Post" template in
+OpenKnowledge and list it in `publish.yml` there.
 
 ```yaml
 ---
 title: Why reconcile loops
-description: One sentence, shown under the title on the homepage.
+description: One sentence, for link previews and the feed.
 date: 2026-10-10        # YYYY-MM-DD; the year must match the file name
 tags: [crossplane]      # optional
 draft: true             # false to publish
@@ -337,29 +358,63 @@ column is 76 characters wide and a diagram renders at its natural size),
 rendered in the browser with the same configuration as slides. Relative links between posts (`./other-post.md`)
 are fine; OpenKnowledge checks them. The content rules for decks apply.
 
-## Writing with OpenKnowledge
+## The about page
 
-[OpenKnowledge](https://openknowledge.ai) is the editor for posts (and can
-edit decks). It opens this repository as its project; `.ok/config.yml`,
-`.okignore`, the templates and the schemas are committed so every clone
-behaves the same. Its machine-local state (`.ok/local/`) is ignored.
+`/about/` is built from `about/<tab>.md`, one file per tab. The file name is
+the tab label and the URL fragment (`/about/#experience`).
 
-The flow:
+```yaml
+---
+title: Experience     # the section heading
+order: 2              # tab position; intro.md is 1
+description: …        # intro.md only: the page's link preview
+draft: false          # true leaves the tab off the published site
+---
+```
 
-1. The OpenKnowledge checkout stays on the **`writing`** branch. Its
-   auto-sync commits and pushes there on its own; nothing on `writing` is
-   published.
-2. Every push to `writing` runs `pnpm check` and a build in CI, so a bad
-   frontmatter or a broken link shows up there first.
-3. Publishing is a merge of `writing` into `main` (a pull request, or a
-   local merge and push). Only `main` deploys.
-4. Code changes go the other way: after a change lands on `main`, merge
-   `main` into `writing` so OpenKnowledge keeps syncing without conflicts.
+- `intro.md` is required and cannot be a draft. Every other tab is
+  optional: delete the file or set `draft: true` and the tab disappears.
+  With one section left, the tab row disappears too.
+- Headings inside a section are `###`; the title is the section's `h2`.
+- Experience is written as areas of work and years. **No employer or
+  client names**, no job titles, the same rule as decks.
+- Open source is a short, chosen list linking to GitHub, not every pull
+  request; the last line links to the full search. Nothing is fetched from
+  GitHub at build time.
+- Links to pages of this site need a full URL; `.md` links are not
+  rewritten outside posts.
 
-Agents working in the repository should not commit content on `writing`
-while OpenKnowledge has it open elsewhere; make the change on a branch from
-`main` and merge. The `ok` CLI needs Node 24 or newer; the site itself
-builds on Node 22 (`.nvmrc`), and the two do not conflict.
+`pnpm check` enforces the rules (`scripts/lib/about.ts`); OpenKnowledge
+shows them through `.ok/schemas/about.json`. The header link comes from
+`pages` in `src/site.config.ts`.
+
+## Where content comes from
+
+This repository is public, so content is written elsewhere: in the private
+repository `cychiang/knowledge`, usually in
+[OpenKnowledge](https://openknowledge.ai). That repository holds every
+deck, post and about tab, private ones and working notes included. Its
+`publish.yml` lists what is public, and its GitHub Action copies exactly
+those items here as a pull request ("Sync content from the knowledge
+repository", branch `sync/knowledge`).
+
+1. Content is written and committed in `cychiang/knowledge`.
+2. A push there that touches published content opens or updates the sync
+   pull request here.
+3. This repository's workflow runs `pnpm check` and a build on it.
+4. Merging it publishes. Only `main` deploys.
+
+Consequences for this repository:
+
+- `decks/`, `posts/` and `about/` are owned by the sync: each sync replaces
+  them with the published items. Do not edit content here; change it in
+  `cychiang/knowledge`. A fix made here is overwritten by the next sync.
+- Of a deck folder only `slides.md`, `cover.*` and the folders `pages/`,
+  `images/`, `public/`, `components/`, `layouts/`, `snippets/` are
+  published. Notes and reviews next to a deck stay private.
+- The rules stay here: `pnpm check`, the schemas in `.ok/schemas/` and this
+  file. When a rule changes, copy the changed schema to `cychiang/knowledge`.
+- Code changes are ordinary branches from `main`.
 
 ## Adding other kinds of content
 

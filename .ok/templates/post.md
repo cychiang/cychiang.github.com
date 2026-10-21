@@ -13,5 +13,6 @@ Start with the claim, then earn it. One idea per section; headings in
 sentence case; code in fenced blocks with a language; diagrams in fenced
 mermaid blocks copied from design/templates/diagrams/.
 
-Set `draft: false` when it is ready. Merging the writing branch into main
-publishes it at /posts/<file-name>/.
+Set `draft: false` and add the file name to publish.yml when it is ready.
+Merging the sync pull request on the public repository publishes it at
+/posts/<file-name>/.

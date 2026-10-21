@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { deck, cover } = Astro.props;
-const { title, description, date, type, event, slides, links, draft } = deck.data;
+const { title, date, type, event, slides, links, draft } = deck.data;
 
 const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
 const href = `${base}/decks/${deck.id}/`;
@@ -45,7 +45,6 @@ const extraLinks = Object.entries(links);
   </a>
 
   <h3 id={`deck-${deck.id}`} class:list={{ 'visually-hidden': !cover }}>{title}</h3>
-  {description && <p class="deck-description">{description}</p>}
 
   <dl class="visually-hidden">
     <dt>Date</dt>
@@ -125,10 +124,14 @@ const extraLinks = Object.entries(links);
     color: var(--color-accent);
   }
 
+  /* Every pane is the same size, whatever is on the cover: the body is
+     always 16:9 and never grows to fit its content. */
   .pane-body {
     display: flex;
     align-items: flex-end;
     aspect-ratio: 16 / 9;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .pane-body :global(img) {
@@ -138,12 +141,18 @@ const extraLinks = Object.entries(links);
     object-fit: cover;
   }
 
-  /* Typeset cover, used until the deck ships its own cover image. */
+  /* Typeset cover, used until the deck ships its own cover image. A title
+     longer than three lines ends in an ellipsis instead of growing the pane. */
   .pane-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
     max-width: 18ch;
-    padding: 6cqi;
+    margin: 6cqi;
     font-family: var(--font-mono);
-    font-size: clamp(1.25rem, 8cqi, 2.25rem);
+    font-size: clamp(1rem, 7.5cqi, 2.25rem);
     font-weight: var(--weight-strong);
     line-height: 1.12;
     letter-spacing: -0.02em;
@@ -170,24 +179,6 @@ const extraLinks = Object.entries(links);
     margin-top: 0.75rem;
     font-size: var(--text-base);
     font-weight: var(--weight-strong);
-  }
-
-  /* Read as a shell comment under the pane. */
-  .deck-description {
-    margin-top: 0.75rem;
-    padding-left: 2ch;
-    text-indent: -2ch;
-    color: var(--color-ink-soft);
-    font-size: var(--text-sm);
-    line-height: 1.6;
-  }
-
-  .deck-description::before {
-    content: '# ';
-  }
-
-  h3 + .deck-description {
-    margin-top: 0.125rem;
   }
 
   .deck-notes {

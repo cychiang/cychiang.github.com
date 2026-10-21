@@ -1,13 +1,13 @@
 name: Build and deploy
 
-# Pull requests and pushes to the writing branch (where OpenKnowledge
-# auto-syncs notes) are built and checked. Pushes to main are also published
-# to GitHub Pages (repository Settings > Pages > Source must be "GitHub
+# Pull requests (including the content sync from the private knowledge
+# repository) are built and checked. Pushes to main are also published to
+# GitHub Pages (repository Settings > Pages > Source must be "GitHub
 # Actions").
 
 on:
   push:
-    branches: [main, writing]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 

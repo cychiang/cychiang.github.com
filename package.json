@@ -12,7 +12,7 @@
     "dev": "astro dev",
     "deck": "node scripts/deck.ts",
     "new:deck": "node scripts/new-deck.ts",
-    "check": "pnpm run design:check && node scripts/check-decks.ts && node scripts/check-posts.ts && astro check && pnpm run design:specimen",
+    "check": "pnpm run design:check && node scripts/check-decks.ts && node scripts/check-posts.ts && node scripts/check-about.ts && astro check && pnpm run design:specimen",
     "build": "pnpm run build:site && pnpm run build:decks",
     "build:site": "astro build",
     "build:decks": "node scripts/build-decks.ts",

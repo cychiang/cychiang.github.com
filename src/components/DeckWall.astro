@@ -3,6 +3,7 @@ import type { ImageMetadata } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import { typeLabels } from '../site.config';
 import DeckCard from './DeckCard.astro';
+import Pager from './Pager.astro';
 
 interface Props {
   decks: CollectionEntry<'decks'>[];
@@ -46,36 +47,48 @@ const emptySlots = Math.max(0, 3 - decks.length);
   {
     Array.from({ length: emptySlots }, (_, index) => (
       <div class="empty-slot" data-empty-slot>
-        {index === 0 && (
-          <p>
-            {decks.length === 0 ? 'The first deck goes here.' : 'The next deck goes here.'}
-            <span class="cursor" aria-hidden="true" />
-          </p>
-        )}
+        <span class="slot-bar" aria-hidden="true" />
+        <span class="slot-body">
+          {index === 0 && (
+            <p>
+              {decks.length === 0 ? 'The first deck goes here.' : 'The next deck goes here.'}
+              <span class="cursor" aria-hidden="true" />
+            </p>
+          )}
+        </span>
+        <span class="slot-bar" aria-hidden="true" />
       </div>
     ))
   }
 </div>
 
+<Pager name="decks" label="Deck pages" />
+
 <script>
+  import { createPager } from '../scripts/pager';
+
   const wall = document.querySelector<HTMLElement>('[data-wall]');
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  let type = 'all';
 
-  /** Show only decks of one type ('all' shows everything). */
-  function applyFilter(type: string) {
-    for (const button of buttons) {
-      button.setAttribute('aria-pressed', String(button.dataset.filter === type));
-    }
-    for (const card of wall?.querySelectorAll<HTMLElement>('[data-type]') ?? []) {
-      card.hidden = type !== 'all' && card.dataset.type !== type;
-    }
-    for (const slot of wall?.querySelectorAll<HTMLElement>('[data-empty-slot]') ?? []) {
-      slot.hidden = type !== 'all';
-    }
+  /** The decks of the chosen type, then the empty slots when showing all. */
+  function items(): HTMLElement[] {
+    const children = [...(wall?.children ?? [])] as HTMLElement[];
+    return children.filter((child) =>
+      'emptySlot' in child.dataset ? type === 'all' : type === 'all' || child.dataset.type === type,
+    );
   }
 
+  const pager = wall ? createPager({ list: wall, name: 'decks', items, perPage: 4 }) : undefined;
+
   for (const button of buttons) {
-    button.addEventListener('click', () => applyFilter(button.dataset.filter ?? 'all'));
+    button.addEventListener('click', () => {
+      type = button.dataset.filter ?? 'all';
+      for (const other of buttons) {
+        other.setAttribute('aria-pressed', String(other === button));
+      }
+      pager?.reset();
+    });
   }
 </script>
 
@@ -122,16 +135,53 @@ const emptySlots = Math.max(0, 3 - decks.length);
     display: none;
   }
 
-  /* An empty pane, the same shape as a deck. */
+  /* On one screen the wall takes the height it is given; the pager decides
+     how many rows that is. */
+  @media (min-width: 60rem) and (min-height: 34rem) {
+    :global(html.paged) .wall {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      align-content: start;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+      gap: var(--wall-gap);
+    }
+  }
+
+  /* An empty pane, built like a deck pane (bar, 16:9 body, status line) so it
+     is exactly the same size. The bars are invisible spacers. */
   .empty-slot {
     display: flex;
-    align-items: flex-end;
-    aspect-ratio: 16 / 10.6;
-    padding: 1rem;
+    flex-direction: column;
     border: var(--border) dashed var(--color-line);
     border-radius: var(--radius);
     color: var(--color-ink-soft);
     font-size: var(--text-sm);
+  }
+
+  .slot-bar {
+    padding: 0.375rem 0.75rem;
+    border-bottom: var(--border) solid transparent;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+  }
+
+  .slot-bar::before {
+    content: '\00a0';
+  }
+
+  .slot-bar:last-child {
+    border-top: var(--border) solid transparent;
+    border-bottom: 0;
+  }
+
+  .slot-body {
+    display: flex;
+    align-items: flex-end;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1rem;
   }
 
   /* The one moving thing on the page: a cursor waiting for the next deck. */

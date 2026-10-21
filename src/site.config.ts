@@ -8,9 +8,6 @@ export const site = {
   name: 'Chuan-Yen Chiang',
   /** The homepage headline. */
   headline: 'Slide decks and notes on platform engineering.',
-  /** One or two sentences under the headline. */
-  intro:
-    'I work on cloud platforms in Stockholm and contribute to open source. This is where the decks from that work will live. The first ones are on their way.',
   /** Used for <meta name="description"> and link previews. */
   description: 'Slide decks and notes on platform engineering by Chuan-Yen Chiang.',
   /** The page language, for <html lang> and the feed. */
@@ -19,6 +16,9 @@ export const site = {
   author: { name: 'Chuan-Yen Chiang', url: 'https://github.com/cychiang' },
   /** The shell prompt shown before each section: user@host:~$ */
   prompt,
+  /** Pages of this site linked from the header, relative to the base path. */
+  pages: [{ label: 'About', path: 'about/' }],
+  /** Profiles elsewhere, linked from the header after the pages. */
   links: [
     { label: 'GitHub', href: 'https://github.com/cychiang' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chuan-yen' },

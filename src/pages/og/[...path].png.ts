@@ -8,12 +8,27 @@ import type { OgCard } from '../../og/render';
 const published = ({ data }: { data: { draft: boolean } }) => import.meta.env.DEV || !data.draft;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [posts, decks] = await Promise.all([getCollection('posts', published), getCollection('decks', published)]);
+  const [posts, decks, about] = await Promise.all([
+    getCollection('posts', published),
+    getCollection('decks', published),
+    getCollection('about', published),
+  ]);
+  const intro = about.find((section) => section.id === 'intro');
   const iso = (date: Date) => date.toISOString().slice(0, 10);
   const cards: { path: string; card: OgCard }[] = [
     {
       path: 'site',
       card: { command: 'cat about.txt', title: site.headline, status: [site.name], statusRight: site.prompt.host },
+    },
+    {
+      path: 'about',
+      card: {
+        command: 'cat about/intro.md',
+        title: intro?.data.title ?? site.name,
+        subtitle: intro?.data.description,
+        status: [site.name],
+        statusRight: site.prompt.host,
+      },
     },
     ...posts.map((post) => ({
       path: `posts/${post.id}`,
