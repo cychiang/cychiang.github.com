@@ -40,6 +40,7 @@ src/content.config.ts      the `decks`, `posts` and `about` collections
 src/pages/                 Astro pages (index, about, 404, posts/[slug])
 src/components/            DeckWall, DeckCard, PostList, Prompt, PromptPrefix
 src/layouts/Base.astro     html shell, header, footer
+src/markdown/post-links.ts rewrites `./other-post.md` links in posts to /posts/<slug>/
 src/styles/global.css      imports the design tokens; homepage layout values
 scripts/lib/decks.ts       deck discovery and validation, shared by everything
 scripts/lib/posts.ts       post discovery and validation
@@ -355,8 +356,10 @@ case; code in fenced blocks with a language (coloured with the design
 tokens); diagrams as fenced `mermaid` blocks copied from
 `design/templates/diagrams/` but drawn top to bottom (`flowchart TD`, the
 column is 76 characters wide and a diagram renders at its natural size),
-rendered in the browser with the same configuration as slides. Relative links between posts (`./other-post.md`)
-are fine; OpenKnowledge checks them. The content rules for decks apply.
+rendered in the browser with the same configuration as slides. Link to another
+post as `./other-post.md`: OpenKnowledge checks the link, and
+`src/markdown/post-links.ts` points it at the post's page when the site is built.
+The content rules for decks apply.
 
 ## The about page
 
