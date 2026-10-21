@@ -197,8 +197,8 @@ importers:
         specifier: ^12.1.0
         version: 12.1.0
       satori:
-        specifier: ^0.44.1
-        version: 0.44.1
+        specifier: ^0.47.1
+        version: 0.47.1
       slidev-addon-site:
         specifier: workspace:*
         version: link:slidev-addon-site
@@ -3727,8 +3727,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  satori@0.44.1:
-    resolution: {integrity: sha512-VivTTA0fZd/hivBvSJW8qDD31LaKIBSN9en4nbT1ljXugL4nT8kdlvF1AAc37yhLiydRNjTg3v4Y1sgQKPQXWg==}
+  satori@0.47.1:
+    resolution: {integrity: sha512-hoRMFMXQ9o4VvcOZ+5pXKRAuWJkjvUzRz3fZJoFrAT3MVfuUvMWROe50lB7AREI1m9a0FAlEMDdQ3WPvHLm7FA==}
     engines: {node: '>=16'}
 
   satteri@0.10.5:
@@ -8657,7 +8657,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  satori@0.44.1:
+  satori@0.47.1:
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
       css-background-parser: 0.1.0
