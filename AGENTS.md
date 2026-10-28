@@ -78,9 +78,6 @@ Managed by other tools. Do not edit by hand:
 - `design/generated/` and `public/favicon.svg`: written by `pnpm design:build`
   from `design/tokens.ts`. Edit the tokens, then regenerate.
 
-The branch `legacy-main` holds the site that lived here until 2013. Leave it
-alone.
-
 ## Commands
 
 | Command | What it does |
