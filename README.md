@@ -51,5 +51,3 @@ The full conventions, for people and coding agents alike, are in
 [AGENTS.md](AGENTS.md). The visual language (tokens, slide theme, diagram
 templates) is in [design/README.md](design/README.md); preview every layout
 with `pnpm design:preview`.
-
-The site that lived here until 2013 is kept on the `legacy-main` branch.
