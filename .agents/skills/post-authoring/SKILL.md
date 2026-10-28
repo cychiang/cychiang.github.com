@@ -50,7 +50,8 @@ draft: true             # false to publish
   with three participants and short messages. They render in the browser
   with the same configuration as slides, in light and dark.
 - Links to other posts are relative (`./2026-other-post.md`); OpenKnowledge
-  flags broken ones. External links are plain Markdown links.
+  flags broken ones, and the build points them at the post's page
+  (`src/markdown/post-links.ts`). External links are plain Markdown links.
 - Nothing confidential from an employer or client. Back claims with
   something concrete. English, sentence case.
 
