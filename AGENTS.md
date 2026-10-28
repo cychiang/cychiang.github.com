@@ -87,7 +87,7 @@ Managed by other tools. Do not edit by hand:
 | `pnpm deck <slug>` | Slidev dev server for one deck (http://localhost:3030). |
 | `pnpm new:deck <slug> "Title"` | Create a deck from the template, as a draft. |
 | `pnpm new:post <slug> "Title"` | Create a post from the template, as a draft. |
-| `pnpm check` | Design tokens, every deck and post, types, and the specimen deck. Must pass before a commit. |
+| `pnpm check` | Design tokens, every deck and post, the about page, types, and the specimen deck. Must pass before a commit. |
 | `pnpm build` | Build the homepage, then every published deck, into `dist/`. |
 | `pnpm preview` | Serve `dist/` exactly as it will be published. |
 | `pnpm design:build` | Regenerate token files after editing `design/tokens.ts`. |
